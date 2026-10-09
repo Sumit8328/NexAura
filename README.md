@@ -13,10 +13,12 @@ This repository contains the **complete, standalone, responsive frontend** engin
 - **Product Name**: KARTAVYA
 - **Core Tagline**: *"Predict. Prepare. Deliver."*
 - **Mission**: Providing operational commanders, supply officers, and logistics directors with real-time early warning telemetry, forward stock runway estimations, autonomous replenishment proposals, and multi-modal corridor intelligence.
-- **Midnight Dark Surfaces**: Backgrounds engineered with `#060a12`, `#0b1120`, and `#0f172a` for low eye strain in 24/7 command environments.
-- **Electric Cyan (`#00f0ff` / `#06b6d4`)**: Active telemetry streams, real-time vehicle vectors, and high-confidence predictions.
-- **Hazard Amber (`#f59e0b`) & Crimson (`#f43f5e`)**: Early warning stockout signals, weather closures, and corridor bottlenecks.
-- **Density & Hierarchy**: Compact typography (`Inter` + `JetBrains Mono`), corner reticles, micro-status indicators, and instant drill-downs.
+- **Midnight Command Surfaces**: Backgrounds engineered with `#0B1220` (main canvas), `#141F30` (card and panel surfaces), and `#1B293B` (secondary surfaces).
+- **Tactical Borders**: Subtle slate delineations (`#263449`) and corner ticks for military-grade data partitioning.
+- **Electric Mint / Cyan Accent (`#55E6C1`)**: Primary operational telemetry streams, vector markers, and active status indicators.
+- **Tactical Sky Blue Accent (`#38BDF8`)**: Secondary trajectories, demand confidence envelopes, and corridor vectors.
+- **Hazard Amber (`#FBBF24`) & Critical Crimson (`#F87171`)**: Stockout risk warnings, degraded route alerts, and human approval requisitions.
+- **High-Contrast Typography**: Primary text (`#F8FAFC`) and secondary text (`#94A3B8`) ensuring clean legibility in 24/7 command center lighting.
 
 ---
 
