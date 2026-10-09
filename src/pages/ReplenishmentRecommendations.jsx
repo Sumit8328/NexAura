@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   CheckSquare, 
   Check, 
@@ -13,7 +14,9 @@ import {
   ArrowRight, 
   RotateCcw,
   ShieldCheck,
-  Send
+  Send,
+  Sparkles,
+  Plus
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -24,7 +27,10 @@ import { recommendationService } from '../services/recommendationService';
 import { useToast } from '../context/ToastContext';
 
 export const ReplenishmentRecommendations = () => {
+  const navigate = useNavigate();
   const { success, error, info } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const highlightedRecId = searchParams.get('recId');
 
   const [recommendations, setRecommendations] = useState([]);
   const [counts, setCounts] = useState({ total: 4, pending: 4, approved: 0, modified: 0, rejected: 0, executed: 0 });
@@ -38,10 +44,19 @@ export const ReplenishmentRecommendations = () => {
   const [isApproveConfirmOpen, setIsApproveConfirmOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
   // Forms
   const [rejectReason, setRejectReason] = useState('');
   const [modifyForm, setModifyForm] = useState({ modifiedQty: '', modifiedTransport: '', reason: '' });
+  const [generateForm, setGenerateForm] = useState({
+    location: 'Sector-4 Forward Depot',
+    supplyCategory: 'Fuel (JP-8 Synthetic)',
+    suggestedReplenishmentQty: 22000,
+    transportMode: 'Autonomous Armored Rail Tanker',
+    priority: 'Critical',
+    explanation: 'Algorithmic surge mitigation proposal calculated to prevent forward buffer breach.'
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -133,10 +148,26 @@ export const ReplenishmentRecommendations = () => {
     }
   };
 
+  const handleConfirmGenerate = async (e) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      const res = await recommendationService.createRecommendation(generateForm);
+      success('Proposal Synthesized', `${res.recommendation.id} algorithmic recommendation generated and staged for officer verification.`);
+      setIsGenerateModalOpen(false);
+      loadRecommendations();
+    } catch (err) {
+      error('Synthesis failed', err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleExecute = async (rec) => {
     try {
-      await recommendationService.executeRecommendation(rec.id);
-      success('Recommendation Executed', `${rec.id} requisition order formally cut and transferred to active freight dispatch queue.`);
+      const res = await recommendationService.executeRecommendation(rec.id);
+      const manifestId = res?.shipment?.id || 'KTV-Active';
+      success('Recommendation Executed', `${rec.id} requisition order formally cut as manifest ${manifestId} and transferred to freight dispatch queue.`);
       loadRecommendations();
     } catch (e) {
       error('Execution failed', e.message);
@@ -182,23 +213,51 @@ export const ReplenishmentRecommendations = () => {
             ))}
           </div>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={RotateCcw}
-            onClick={handleResetDefaults}
-          >
-            Reset Proposals
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="primary"
+              size="sm"
+              icon={Plus}
+              className="shadow-cyan-sm"
+              onClick={() => setIsGenerateModalOpen(true)}
+            >
+              Synthesize Recommendation
+            </Button>
+
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={RotateCcw}
+              onClick={handleResetDefaults}
+            >
+              Reset Proposals
+            </Button>
+          </div>
         </div>
       </Card>
+
+      {/* Target Highlight Alert Banner if linked from Risk Intelligence */}
+      {highlightedRecId && (
+        <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/50 flex items-center justify-between gap-3 text-xs font-mono text-cyan-200 shadow-cyan-sm">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
+            <span>Focusing on proposal <strong>{highlightedRecId}</strong> dispatched from Shortage Intelligence Matrix.</span>
+          </div>
+          <button
+            onClick={() => setSearchParams({})}
+            className="text-[11px] text-cyan-300 hover:text-white underline font-bold"
+          >
+            Clear Selection
+          </button>
+        </div>
+      )}
 
       {/* Recommendations List */}
       <div className="space-y-4">
         {recommendations.length === 0 ? (
           <Card>
             <div className="py-12 text-center text-slate-400 font-mono text-xs">
-              No recommendations found matching status "{statusFilter}".
+              No replenishment recommendations found matching status "{statusFilter}" in KARTAVYA decision queue.
             </div>
           </Card>
         ) : (
@@ -208,6 +267,7 @@ export const ReplenishmentRecommendations = () => {
             const isModified = rec.status === 'Modified';
             const isRejected = rec.status === 'Rejected';
             const isExecuted = rec.status === 'Executed';
+            const isTarget = highlightedRecId && rec.id === highlightedRecId;
 
             const statusVariant = 
               isApproved ? 'emerald' :
@@ -218,7 +278,12 @@ export const ReplenishmentRecommendations = () => {
             return (
               <div
                 key={rec.id}
-                className="p-5 rounded-xl border border-midnight-700/80 bg-midnight-900/90 backdrop-blur-md shadow-card space-y-4"
+                id={rec.id}
+                className={`p-5 rounded-xl border backdrop-blur-md shadow-card space-y-4 transition-all duration-300 ${
+                  isTarget 
+                    ? 'border-cyan-400 ring-2 ring-cyan-400/60 bg-midnight-900 shadow-[0_0_30px_-5px_rgba(6,182,212,0.35)]' 
+                    : 'border-midnight-700/80 bg-midnight-900/90'
+                }`}
               >
                 {/* Header: ID, Location, Category, Status */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-midnight-750">
@@ -226,6 +291,11 @@ export const ReplenishmentRecommendations = () => {
                     <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-950/80 px-2.5 py-1 rounded border border-cyan-800/40">
                       {rec.id}
                     </span>
+                    {isTarget && (
+                      <Badge variant="cyan" size="sm" dot>
+                        Target Resolution
+                      </Badge>
+                    )}
                     <span className="text-sm font-bold text-white font-mono">
                       {rec.location}
                     </span>
@@ -374,9 +444,19 @@ export const ReplenishmentRecommendations = () => {
                     )}
 
                     {isExecuted && (
-                      <span className="text-xs font-mono text-purple-400 font-bold px-3 py-1 rounded bg-purple-950/40 border border-purple-800/40">
-                        Requisition Manifest Cut • Staged
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-purple-300 font-bold px-3 py-1 rounded bg-purple-950/50 border border-purple-500/40">
+                          Manifest {rec.stagedShipmentId || 'KTV-Active'} Staged
+                        </span>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          iconRight={ArrowRight}
+                          onClick={() => navigate('/shipments')}
+                        >
+                          Track Dispatch
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -546,6 +626,125 @@ export const ReplenishmentRecommendations = () => {
               value={modifyForm.reason}
               onChange={(e) => setModifyForm({ ...modifyForm, reason: e.target.value })}
               placeholder="e.g. Capped to depot loading bay throughput limits; prioritized VTOL airhead transit..."
+              className="w-full bg-midnight-950 border border-midnight-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400"
+            />
+          </div>
+        </form>
+      </Modal>
+
+      {/* Generate / Synthesize Recommendation Modal */}
+      <Modal
+        isOpen={isGenerateModalOpen}
+        onClose={() => setIsGenerateModalOpen(false)}
+        title="Synthesize AI Logistics Recommendation"
+        subtitle="Generate a forward replenishment proposal based on simulated operational telemetry"
+        footer={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setIsGenerateModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              isLoading={isSubmitting}
+              onClick={handleConfirmGenerate}
+              icon={Sparkles}
+            >
+              Generate Proposal
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleConfirmGenerate} className="space-y-4 text-xs font-mono">
+          <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-cyan-200 text-[11px]">
+            Synthesizes an algorithmic replenishment demand order for human command verification.
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-slate-300 font-bold mb-1">Target Depot / Outpost *</label>
+              <select
+                value={generateForm.location}
+                onChange={(e) => setGenerateForm({ ...generateForm, location: e.target.value })}
+                className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+              >
+                <option value="Sector-4 Forward Depot">Sector-4 Forward Depot</option>
+                <option value="Borealis Mountain Outpost">Borealis Mountain Outpost</option>
+                <option value="Aurora Station Alpha">Aurora Station Alpha</option>
+                <option value="Zenith Central Hub">Zenith Central Hub</option>
+                <option value="Vanguard Perimeter Camp">Vanguard Perimeter Camp</option>
+                <option value="Helios Coastal Base">Helios Coastal Base</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-slate-300 font-bold mb-1">Commodity Category *</label>
+              <select
+                value={generateForm.supplyCategory}
+                onChange={(e) => setGenerateForm({ ...generateForm, supplyCategory: e.target.value })}
+                className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+              >
+                <option value="Fuel (JP-8 Synthetic)">Fuel (JP-8 Synthetic)</option>
+                <option value="Field Rations (MRE-X)">Field Rations (MRE-X)</option>
+                <option value="Trauma Medical Kits">Trauma Medical Kits</option>
+                <option value="Potable Water (Purified)">Potable Water (Purified)</option>
+                <option value="Tactical Energy Cells">Tactical Energy Cells</option>
+                <option value="Armored Spares & Optics">Armored Spares & Optics</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-slate-300 font-bold mb-1">Replenishment Quantity *</label>
+              <input
+                type="number"
+                min="100"
+                step="100"
+                required
+                value={generateForm.suggestedReplenishmentQty}
+                onChange={(e) => setGenerateForm({ ...generateForm, suggestedReplenishmentQty: Number(e.target.value) })}
+                className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-300 font-bold mb-1">Priority Echelon *</label>
+              <select
+                value={generateForm.priority}
+                onChange={(e) => setGenerateForm({ ...generateForm, priority: e.target.value })}
+                className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+              >
+                <option value="Critical">Critical Priority</option>
+                <option value="High">High Priority</option>
+                <option value="Standard">Standard Routine</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Transport Corridor Mode</label>
+            <select
+              value={generateForm.transportMode}
+              onChange={(e) => setGenerateForm({ ...generateForm, transportMode: e.target.value })}
+              className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+            >
+              <option value="Autonomous Armored Rail Tanker">Autonomous Armored Rail Tanker (Corridor Diamond)</option>
+              <option value="Autonomous Quad-VTOL Air Lifter">Autonomous Quad-VTOL Air Lifter (Skybridge 09)</option>
+              <option value="Heavy Autonomous Convoy Trucks">Heavy Autonomous Convoy Trucks (Corridor Cobalt)</option>
+              <option value="High-Priority Rail Secure Pod">High-Priority Rail Secure Pod</option>
+              <option value="Bulk Water Tanker Semitrailer">Bulk Water Tanker Semitrailer</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Operational Justification *</label>
+            <textarea
+              rows="2"
+              required
+              value={generateForm.explanation}
+              onChange={(e) => setGenerateForm({ ...generateForm, explanation: e.target.value })}
+              placeholder="Operational reason..."
               className="w-full bg-midnight-950 border border-midnight-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400"
             />
           </div>

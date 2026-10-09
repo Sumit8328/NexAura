@@ -22,7 +22,11 @@ export const SyncProvider = ({ children }) => {
       setSyncQueue(syncService.getQueue());
     };
     window.addEventListener('kartavya_sync_change', handleSyncChange);
-    return () => window.removeEventListener('kartavya_sync_change', handleSyncChange);
+    window.addEventListener('astralogistics_sync_change', handleSyncChange);
+    return () => {
+      window.removeEventListener('kartavya_sync_change', handleSyncChange);
+      window.removeEventListener('astralogistics_sync_change', handleSyncChange);
+    };
   }, [refreshStatus]);
 
   const triggerManualSync = async () => {

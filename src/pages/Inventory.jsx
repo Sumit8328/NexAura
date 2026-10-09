@@ -4,24 +4,28 @@ import {
   Boxes, 
   Search, 
   Filter, 
-  Plus, 
   ArrowDownLeft, 
   ArrowUpRight, 
+  Clock, 
   History, 
-  AlertTriangle, 
-  Layers, 
-  CheckCircle2, 
+  X, 
+  Check, 
+  AlertTriangle,
   RotateCcw,
-  SlidersHorizontal,
-  ChevronRight,
-  Info
+  Sparkles,
+  ShieldCheck,
+  Building,
+  Info,
+  ChevronRight
 } from 'lucide-react';
 import Card from '../components/common/Card';
+import StatCard from '../components/common/StatCard';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import Modal from '../components/common/Modal';
 import Drawer from '../components/common/Drawer';
 import DataDisclaimerBanner from '../components/common/DataDisclaimerBanner';
+import LoadingScreen from '../components/common/LoadingScreen';
 import { inventoryService } from '../services/inventoryService';
 import { useToast } from '../context/ToastContext';
 
@@ -53,9 +57,13 @@ export const Inventory = () => {
   const [issueForm, setIssueForm] = useState({ quantity: '', authorizedBy: 'Lt. Cdr. Vance', recipient: 'Task Force Obsidian Patrol', reason: 'Sortie preparation and perimeter defense' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Reactive filtering
   useEffect(() => {
-    loadInventory();
-  }, [selectedCategory, selectedLocation, selectedStatus]);
+    const handler = setTimeout(() => {
+      loadInventory();
+    }, 150);
+    return () => clearTimeout(handler);
+  }, [search, selectedCategory, selectedLocation, selectedStatus]);
 
   const loadInventory = async () => {
     try {
@@ -76,9 +84,17 @@ export const Inventory = () => {
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
     loadInventory();
+  };
+
+  const clearAllFilters = () => {
+    setSearch('');
+    setSelectedCategory('All');
+    setSelectedLocation('All');
+    setSelectedStatus('All');
+    setSearchParams({});
   };
 
   const openItemDetail = (item) => {
@@ -88,18 +104,28 @@ export const Inventory = () => {
 
   const openReceiptModal = (item) => {
     setActiveItemForAction(item);
-    setReceiptForm({ quantity: '', authorizedBy: 'Lt. Cdr. Vance', reason: 'Inbound resupply transfer', storageBay: 'Main Depot Bay 1' });
+    setReceiptForm({ 
+      quantity: '', 
+      authorizedBy: 'Lt. Cdr. Vance', 
+      reason: 'Inbound resupply transfer', 
+      storageBay: 'Main Depot Bay 1' 
+    });
     setIsReceiptModalOpen(true);
   };
 
   const openIssueModal = (item) => {
     setActiveItemForAction(item);
-    setIssueForm({ quantity: '', authorizedBy: 'Lt. Cdr. Vance', recipient: '1st Mechanized Division', reason: 'Field patrol resupply' });
+    setIssueForm({ 
+      quantity: '', 
+      authorizedBy: 'Lt. Cdr. Vance', 
+      recipient: '1st Mechanized Division', 
+      reason: 'Field patrol resupply' 
+    });
     setIsIssueModalOpen(true);
   };
 
   const handleRecordReceipt = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!activeItemForAction) return;
 
     try {
@@ -126,7 +152,7 @@ export const Inventory = () => {
   };
 
   const handleRecordIssue = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!activeItemForAction) return;
 
     try {
@@ -152,99 +178,163 @@ export const Inventory = () => {
     }
   };
 
-  const handleReset = () => {
-    if (window.confirm('Reset inventory dataset to default prototype baseline?')) {
-      inventoryService.resetDefaults();
-      loadInventory();
-      info('Reset Baseline', 'Inventory restored to initial demonstration values.');
-    }
+  // Compute stats across current items
+  const stats = {
+    totalStockSKUs: items.length,
+    criticalCount: items.filter(i => i.status === 'Critical').length,
+    lowCount: items.filter(i => i.status === 'Low').length,
+    optimalCount: items.filter(i => i.status === 'Optimal').length,
+    excessCount: items.filter(i => i.status === 'Excess').length,
   };
+
+  const categoryPills = [
+    { label: 'All', value: 'All' },
+    { label: 'Fuel (JP-8)', value: 'Fuel' },
+    { label: 'Field Rations', value: 'Rations' },
+    { label: 'Trauma Kits', value: 'Medical' },
+    { label: 'Potable Water', value: 'Water' },
+    { label: 'Energy Cells', value: 'Batteries' },
+    { label: 'Armored Spares', value: 'Spares' }
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
+      {/* Banner */}
       <DataDisclaimerBanner 
         mode="prototype"
-        customText="Operational Stockpile Ledger. Real-time client-side transactions update immediately and stage to local persistence."
+        customText="Operational Forward Stockpile Ledger. Inbound receipts and outbound issues directly recompute stock coverage days and append timestamped transactions to the custody journal."
       />
 
-      {/* Header Controls & Filter Strip */}
+      {/* KPI Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <StatCard
+          title="Tracked Items"
+          value={stats.totalStockSKUs}
+          change="6 Strategic Depots"
+          changeType="neutral"
+          icon={Boxes}
+          variant="cyan"
+          subtitle="Showing active filter"
+        />
+        <StatCard
+          title="Critical Shortage"
+          value={stats.criticalCount}
+          change="Under 4 Days Runway"
+          changeType="critical"
+          icon={AlertTriangle}
+          variant="red"
+          subtitle="Priority Resupply"
+          onClick={() => setSelectedStatus(selectedStatus === 'Critical' ? 'All' : 'Critical')}
+        />
+        <StatCard
+          title="Low Safety Buffer"
+          value={stats.lowCount}
+          change="At or Below Safety"
+          changeType="decrease"
+          icon={ShieldCheck}
+          variant="amber"
+          subtitle="Monitoring Burn"
+          onClick={() => setSelectedStatus(selectedStatus === 'Low' ? 'All' : 'Low')}
+        />
+        <StatCard
+          title="Optimal / Excess"
+          value={stats.optimalCount + stats.excessCount}
+          change="Stable Supply Line"
+          changeType="increase"
+          icon={Building}
+          variant="emerald"
+          subtitle="Coverage > 7 Days"
+          onClick={() => setSelectedStatus(selectedStatus === 'Optimal' ? 'All' : 'Optimal')}
+        />
+      </div>
+
+      {/* Filter and Search Cockpit */}
       <Card>
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          {/* Search bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-md relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by SKU, commodity, or depot..."
-              className="w-full bg-midnight-950 border border-midnight-700/80 rounded-lg pl-9 pr-24 py-2 text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50"
-            />
-            <Button 
-              type="submit" 
-              size="sm" 
-              variant="outline" 
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 px-2.5 text-xs"
-            >
-              Filter
-            </Button>
-          </form>
+        <div className="space-y-4">
+          {/* Top Bar: Search and Dropdowns */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            {/* Search bar with instant clear */}
+            <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by SKU, commodity, or depot..."
+                className="w-full bg-midnight-950 border border-midnight-700/80 rounded-lg pl-9 pr-16 py-2 text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  title="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </form>
 
-          {/* Dropdown Filters */}
-          <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-            {/* Category */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-midnight-950 border border-midnight-700 rounded-lg px-2.5 py-2 text-slate-300 focus:outline-none focus:border-cyan-400"
-            >
-              <option value="All">All Categories</option>
-              <option value="Fuel">Fuel (JP-8 Synthetic)</option>
-              <option value="Rations">Field Rations (MRE-X)</option>
-              <option value="Medical">Trauma Medical Kits</option>
-              <option value="Water">Potable Water</option>
-              <option value="Batteries">Energy Cells</option>
-              <option value="Spares">Armored Spares</option>
-            </select>
+            {/* Dropdown Filters */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+              {/* Location */}
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="bg-midnight-950 border border-midnight-700 rounded-lg px-2.5 py-2 text-slate-300 focus:outline-none focus:border-cyan-400"
+              >
+                <option value="All">All Depots</option>
+                <option value="Sector-4 Forward Depot">Sector-4 Depot</option>
+                <option value="Aurora Station Alpha">Aurora Station Alpha</option>
+                <option value="Borealis Mountain Outpost">Borealis Outpost</option>
+                <option value="Zenith Central Hub">Zenith Central Hub</option>
+                <option value="Helios Coastal Base">Helios Base</option>
+                <option value="Vanguard Perimeter Camp">Vanguard Camp</option>
+              </select>
 
-            {/* Location */}
-            <select
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className="bg-midnight-950 border border-midnight-700 rounded-lg px-2.5 py-2 text-slate-300 focus:outline-none focus:border-cyan-400"
-            >
-              <option value="All">All Locations</option>
-              <option value="Sector-4 Forward Depot">Sector-4 Depot</option>
-              <option value="Aurora Station Alpha">Aurora Station Alpha</option>
-              <option value="Borealis Mountain Outpost">Borealis Outpost</option>
-              <option value="Zenith Central Hub">Zenith Central Hub</option>
-              <option value="Helios Coastal Base">Helios Base</option>
-              <option value="Vanguard Perimeter Camp">Vanguard Camp</option>
-            </select>
+              {/* Status */}
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="bg-midnight-950 border border-midnight-700 rounded-lg px-2.5 py-2 text-slate-300 focus:outline-none focus:border-cyan-400"
+              >
+                <option value="All">All Statuses</option>
+                <option value="Critical">Critical Shortage</option>
+                <option value="Low">Low Stock</option>
+                <option value="Optimal">Optimal</option>
+                <option value="Excess">Excess Surplus</option>
+              </select>
 
-            {/* Status */}
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="bg-midnight-950 border border-midnight-700 rounded-lg px-2.5 py-2 text-slate-300 focus:outline-none focus:border-cyan-400"
-            >
-              <option value="All">All Statuses</option>
-              <option value="Critical">Critical Shortage</option>
-              <option value="Low">Low Buffer</option>
-              <option value="Optimal">Optimal Runway</option>
-              <option value="Excess">Excess Stock</option>
-            </select>
+              {(search || selectedCategory !== 'All' || selectedLocation !== 'All' || selectedStatus !== 'All') && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={RotateCcw}
+                  onClick={clearAllFilters}
+                  className="text-xs text-slate-400 hover:text-white"
+                >
+                  Reset
+                </Button>
+              )}
+            </div>
+          </div>
 
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={RotateCcw}
-              onClick={handleReset}
-              title="Reset inventory to original demonstration values"
-            >
-              Reset Baseline
-            </Button>
+          {/* Category Filter Pills Bar */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-midnight-800 text-xs font-mono">
+            <span className="text-slate-400 text-[11px] mr-1 uppercase font-bold">Category:</span>
+            {categoryPills.map(cat => (
+              <button
+                key={cat.value}
+                onClick={() => setSelectedCategory(cat.value)}
+                className={`px-2.5 py-1 rounded-md transition-all ${
+                  selectedCategory === cat.value
+                    ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/50 shadow-[0_0_8px_rgba(0,240,255,0.2)]'
+                    : 'bg-midnight-950/80 text-slate-400 hover:text-slate-200 border border-midnight-800'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
         </div>
       </Card>
@@ -260,20 +350,30 @@ export const Inventory = () => {
             <thead>
               <tr className="border-b border-midnight-700 bg-midnight-950/60 text-slate-400">
                 <th className="py-3 px-3.5 font-bold uppercase tracking-wider">SKU & Item Name</th>
-                <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Location</th>
+                <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Depot Location</th>
                 <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Stock Level</th>
                 <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Daily Burn</th>
                 <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Runway / Coverage</th>
                 <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Condition</th>
                 <th className="py-3 px-3.5 font-bold uppercase tracking-wider">Status</th>
-                <th className="py-3 px-3.5 font-bold uppercase tracking-wider text-right">Actions</th>
+                <th className="py-3 px-3.5 font-bold uppercase tracking-wider text-right">Quick Directives</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-midnight-800">
               {items.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="py-12 text-center text-slate-400">
-                    No inventory items matched the selected filter criteria.
+                    <div className="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
+                      <Boxes className="w-8 h-8 text-slate-600 mb-1" />
+                      <p className="font-semibold text-slate-300 font-mono text-sm">No Stockpile Records Found</p>
+                      <p className="text-xs text-slate-400 font-sans">No items matched the selected query in KARTAVYA forward stockpiles.</p>
+                      <button 
+                        onClick={clearAllFilters}
+                        className="mt-2 text-xs font-mono text-cyan-400 hover:text-cyan-300 underline"
+                      >
+                        Reset All Filters
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -324,11 +424,11 @@ export const Inventory = () => {
                         }`}>
                           {item.stockCoverageDays} Days
                         </div>
-                        <div className="w-20 bg-midnight-950 rounded-full h-1 mt-1 overflow-hidden">
+                        <div className="w-24 bg-midnight-950 rounded-full h-1.5 mt-1 overflow-hidden border border-midnight-800">
                           <div 
-                            className={`h-full ${
-                              item.stockCoverageDays < 4 ? 'bg-rose-500' :
-                              item.stockCoverageDays < 6 ? 'bg-amber-400' : 'bg-emerald-400'
+                            className={`h-full rounded-full transition-all ${
+                              item.stockCoverageDays < 4 ? 'bg-rose-500 shadow-[0_0_6px_#f43f5e]' :
+                              item.stockCoverageDays < 6 ? 'bg-amber-400 shadow-[0_0_6px_#f59e0b]' : 'bg-emerald-400 shadow-[0_0_6px_#10b981]'
                             }`}
                             style={{ width: `${Math.min(100, (item.stockCoverageDays / 15) * 100)}%` }}
                           />
@@ -336,7 +436,7 @@ export const Inventory = () => {
                       </td>
 
                       <td className="py-3.5 px-3.5 text-slate-300">
-                        <span className="inline-flex items-center gap-1">
+                        <span className="inline-flex items-center gap-1.5">
                           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                           {item.condition}
                         </span>
@@ -352,7 +452,7 @@ export const Inventory = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openReceiptModal(item)}
-                            className="px-2 py-1 rounded bg-midnight-800 hover:bg-emerald-950 text-emerald-400 border border-midnight-700 hover:border-emerald-500/50 transition-colors text-[11px] inline-flex items-center gap-1 font-semibold"
+                            className="px-2.5 py-1 rounded bg-midnight-800 hover:bg-emerald-950/80 text-emerald-400 border border-midnight-700 hover:border-emerald-500/50 transition-colors text-xs inline-flex items-center gap-1 font-semibold shadow-sm"
                             title="Record Inbound Receipt"
                           >
                             <ArrowDownLeft className="w-3.5 h-3.5" />
@@ -360,7 +460,7 @@ export const Inventory = () => {
                           </button>
                           <button
                             onClick={() => openIssueModal(item)}
-                            className="px-2 py-1 rounded bg-midnight-800 hover:bg-rose-950 text-rose-300 border border-midnight-700 hover:border-rose-500/50 transition-colors text-[11px] inline-flex items-center gap-1 font-semibold"
+                            className="px-2.5 py-1 rounded bg-midnight-800 hover:bg-rose-950/80 text-rose-300 border border-midnight-700 hover:border-rose-500/50 transition-colors text-xs inline-flex items-center gap-1 font-semibold shadow-sm"
                             title="Record Outbound Issue"
                           >
                             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -389,30 +489,32 @@ export const Inventory = () => {
               key={tx.id}
               className="p-3 rounded-lg bg-midnight-850/50 border border-midnight-750 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono"
             >
-              <div className="flex items-start gap-3">
-                <div className={`p-1.5 rounded border mt-0.5 ${
-                  tx.type === 'Receipt' 
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
-                    : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${
+                  tx.type === 'Receipt' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
                 }`}>
                   {tx.type === 'Receipt' ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">{tx.itemName}</span>
+                    <span className="font-bold text-white text-sm font-sans">{tx.itemName}</span>
                     <Badge variant={tx.type === 'Receipt' ? 'emerald' : 'red'} size="sm">
-                      {tx.type === 'Receipt' ? `+${tx.quantity.toLocaleString()} ${tx.unit}` : `-${tx.quantity.toLocaleString()} ${tx.unit}`}
+                      {tx.type}
                     </Badge>
                   </div>
                   <p className="text-slate-400 text-[11px] mt-0.5">
-                    {tx.reason} • Authorized: {tx.authorizedBy}
+                    {tx.location} • Authorized: {tx.authorizedBy}
                   </p>
                 </div>
               </div>
 
-              <div className="text-right text-[11px] text-slate-400 shrink-0">
-                <div>{tx.location}</div>
-                <div>{new Date(tx.timestamp).toLocaleString()}</div>
+              <div className="text-right">
+                <div className={`font-bold text-sm ${tx.type === 'Receipt' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {tx.type === 'Receipt' ? '+' : '-'}{tx.quantity.toLocaleString()} {tx.unit}
+                </div>
+                <div className="text-[10px] text-slate-500">
+                  {new Date(tx.timestamp).toLocaleString()}
+                </div>
               </div>
             </div>
           ))}
@@ -423,28 +525,19 @@ export const Inventory = () => {
       <Drawer
         isOpen={isDetailDrawerOpen}
         onClose={() => setIsDetailDrawerOpen(false)}
-        title={selectedItem?.name}
+        title={selectedItem?.name || 'Stockpile Record'}
         subtitle={`${selectedItem?.sku} • ${selectedItem?.location}`}
-        badge={selectedItem && (
-          <Badge 
-            variant={selectedItem.status === 'Critical' ? 'red' : selectedItem.status === 'Low' ? 'amber' : 'emerald'}
-            size="sm"
-          >
-            {selectedItem.status}
-          </Badge>
-        )}
-        footer={
-          selectedItem && (
-            <div className="flex items-center gap-2 w-full">
+      >
+        {selectedItem && (
+          <div className="space-y-6 text-xs font-mono">
+            {/* Quick action buttons in drawer */}
+            <div className="flex items-center gap-2">
               <Button
                 variant="primary"
                 size="sm"
                 className="flex-1"
                 icon={ArrowDownLeft}
-                onClick={() => {
-                  setIsDetailDrawerOpen(false);
-                  openReceiptModal(selectedItem);
-                }}
+                onClick={() => { setIsDetailDrawerOpen(false); openReceiptModal(selectedItem); }}
               >
                 Record Receipt
               </Button>
@@ -453,48 +546,59 @@ export const Inventory = () => {
                 size="sm"
                 className="flex-1"
                 icon={ArrowUpRight}
-                onClick={() => {
-                  setIsDetailDrawerOpen(false);
-                  openIssueModal(selectedItem);
-                }}
+                onClick={() => { setIsDetailDrawerOpen(false); openIssueModal(selectedItem); }}
               >
                 Record Issue
               </Button>
             </div>
-          )
-        }
-      >
-        {selectedItem && (
-          <div className="space-y-5 text-xs font-mono">
-            {/* Stock Level Card */}
-            <div className="p-4 rounded-lg bg-midnight-950 border border-midnight-700">
-              <span className="text-slate-400 uppercase text-[10px] font-bold">Current Depot Stock</span>
-              <div className="text-2xl font-bold text-white mt-1">
-                {selectedItem.currentStock.toLocaleString()} {selectedItem.unit}
+
+            {/* Metric Highlights */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg bg-midnight-950 border border-midnight-800">
+                <span className="text-slate-400 text-[10px] uppercase block">Current Stock</span>
+                <span className="text-xl font-bold text-white">{selectedItem.currentStock.toLocaleString()} {selectedItem.unit}</span>
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-2 text-slate-300 text-[11px] pt-2 border-t border-midnight-800">
-                <div>Safety Stock: <span className="text-white font-bold">{selectedItem.safetyStock.toLocaleString()} {selectedItem.unit}</span></div>
-                <div>Reorder Point: <span className="text-white font-bold">{selectedItem.reorderLevel.toLocaleString()} {selectedItem.unit}</span></div>
-                <div>Avg Daily Burn: <span className="text-white font-bold">{selectedItem.avgDailyConsumption.toLocaleString()} {selectedItem.unit}</span></div>
-                <div>Coverage Runway: <span className="text-cyan-400 font-bold">{selectedItem.stockCoverageDays} Days</span></div>
+              <div className="p-3 rounded-lg bg-midnight-950 border border-midnight-800">
+                <span className="text-slate-400 text-[10px] uppercase block">Runway</span>
+                <span className={`text-xl font-bold ${
+                  selectedItem.stockCoverageDays < 4 ? 'text-rose-400' : 'text-emerald-400'
+                }`}>{selectedItem.stockCoverageDays} Days</span>
               </div>
             </div>
 
-            {/* Condition & Notes */}
-            <div className="p-4 rounded-lg bg-midnight-850 border border-midnight-750 space-y-2">
-              <div className="text-[10px] uppercase font-bold text-slate-400">Depot Telemetry Notes</div>
-              <p className="text-slate-200 font-sans text-xs leading-relaxed">
-                {selectedItem.notes}
-              </p>
-              <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between">
-                <span>Condition: <span className="text-emerald-400">{selectedItem.condition}</span></span>
-                <span>Max Capacity: {selectedItem.maxCapacity.toLocaleString()} {selectedItem.unit}</span>
+            {/* Key Parameters */}
+            <div className="p-3.5 rounded-lg bg-midnight-950 border border-midnight-800 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Safety Threshold:</span>
+                <span className="text-white font-bold">{selectedItem.safetyStock.toLocaleString()} {selectedItem.unit}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Reorder Threshold:</span>
+                <span className="text-white">{selectedItem.reorderLevel.toLocaleString()} {selectedItem.unit}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Max Depot Capacity:</span>
+                <span className="text-white">{selectedItem.maxCapacity.toLocaleString()} {selectedItem.unit}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Daily Consumption:</span>
+                <span className="text-cyan-400">{selectedItem.avgDailyConsumption.toLocaleString()} {selectedItem.unit}/day</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Condition:</span>
+                <span className="text-white">{selectedItem.condition}</span>
               </div>
             </div>
 
-            {/* Item Transaction History */}
+            {/* Notes */}
+            <div className="p-3.5 rounded-lg bg-midnight-950/80 border border-midnight-800">
+              <span className="text-slate-400 text-[10px] uppercase font-bold block mb-1">Operational Notes:</span>
+              <p className="text-slate-300 font-sans text-xs leading-relaxed">{selectedItem.notes}</p>
+            </div>
+
+            {/* History of this item */}
             <div>
-              <div className="text-[11px] uppercase font-bold text-slate-400 mb-2">Item Custody Trail</div>
+              <span className="text-slate-400 text-[11px] font-bold uppercase tracking-wider block mb-2">Item Custody History:</span>
               <div className="space-y-2">
                 {transactions
                   .filter(t => t.itemId === selectedItem.id)
@@ -539,6 +643,11 @@ export const Inventory = () => {
         }
       >
         <form onSubmit={handleRecordReceipt} className="space-y-4 text-xs font-mono">
+          <div className="p-2.5 rounded bg-midnight-950 border border-midnight-800 text-[11px] text-slate-300 flex justify-between">
+            <span>Current Depot Stock:</span>
+            <span className="font-bold text-white">{activeItemForAction?.currentStock.toLocaleString()} {activeItemForAction?.unit}</span>
+          </div>
+
           <div>
             <label className="block text-slate-300 font-bold mb-1">Receipt Quantity ({activeItemForAction?.unit}) *</label>
             <input
@@ -551,7 +660,31 @@ export const Inventory = () => {
               placeholder={`Enter quantity in ${activeItemForAction?.unit}...`}
               className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400 text-sm"
             />
+            {/* Quick Preset Buttons for testing */}
+            <div className="flex items-center gap-1.5 mt-2">
+              <span className="text-[10px] text-slate-400">Quick Fill:</span>
+              {[500, 1000, 5000, 10000].map(amt => (
+                <button
+                  type="button"
+                  key={amt}
+                  onClick={() => setReceiptForm({ ...receiptForm, quantity: String(amt) })}
+                  className="px-2 py-0.5 rounded bg-midnight-850 hover:bg-midnight-800 border border-midnight-700 text-[10px] text-cyan-300 transition-colors"
+                >
+                  +{amt.toLocaleString()}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Resulting Stock Preview */}
+          {Number(receiptForm.quantity) > 0 && activeItemForAction && (
+            <div className="p-2.5 rounded bg-emerald-950/20 border border-emerald-500/30 text-emerald-300 text-[11px] flex justify-between">
+              <span>Projected Post-Receipt Stock:</span>
+              <span className="font-bold">
+                {(activeItemForAction.currentStock + Number(receiptForm.quantity)).toLocaleString()} {activeItemForAction.unit}
+              </span>
+            </div>
+          )}
 
           <div>
             <label className="block text-slate-300 font-bold mb-1">Authorizing Officer / Lead *</label>
@@ -629,7 +762,39 @@ export const Inventory = () => {
               placeholder={`Max ${activeItemForAction?.currentStock.toLocaleString()} ${activeItemForAction?.unit}...`}
               className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400 text-sm"
             />
+            {/* Quick Preset Buttons for testing */}
+            <div className="flex items-center gap-1.5 mt-2">
+              <span className="text-[10px] text-slate-400">Quick Fill:</span>
+              {[250, 500, 1000, 2500].map(amt => (
+                <button
+                  type="button"
+                  key={amt}
+                  disabled={amt > (activeItemForAction?.currentStock || 0)}
+                  onClick={() => setIssueForm({ ...issueForm, quantity: String(amt) })}
+                  className="px-2 py-0.5 rounded bg-midnight-850 hover:bg-midnight-800 border border-midnight-700 text-[10px] text-rose-300 disabled:opacity-30 transition-colors"
+                >
+                  -{amt.toLocaleString()}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Resulting Stock Preview */}
+          {Number(issueForm.quantity) > 0 && activeItemForAction && (
+            <div className={`p-2.5 rounded border text-[11px] flex justify-between ${
+              (activeItemForAction.currentStock - Number(issueForm.quantity)) < activeItemForAction.safetyStock
+                ? 'bg-rose-950/20 border-rose-500/30 text-rose-300'
+                : 'bg-midnight-950 border-midnight-800 text-slate-300'
+            }`}>
+              <span>Projected Post-Issue Stock:</span>
+              <span className="font-bold">
+                {Math.max(0, activeItemForAction.currentStock - Number(issueForm.quantity)).toLocaleString()} {activeItemForAction.unit}
+                {(activeItemForAction.currentStock - Number(issueForm.quantity)) < activeItemForAction.safetyStock && (
+                  <span className="text-rose-400 ml-1.5">(Below Safety Buffer)</span>
+                )}
+              </span>
+            </div>
+          )}
 
           <div>
             <label className="block text-slate-300 font-bold mb-1">Recipient Unit / Echelon *</label>
@@ -643,7 +808,7 @@ export const Inventory = () => {
           </div>
 
           <div>
-            <label className="block text-slate-300 font-bold mb-1">Authorizing Officer *</label>
+            <label className="block text-slate-300 font-bold mb-1">Authorizing Commander *</label>
             <input
               type="text"
               required
@@ -654,7 +819,7 @@ export const Inventory = () => {
           </div>
 
           <div>
-            <label className="block text-slate-300 font-bold mb-1">Mission Rationale / Operational Purpose *</label>
+            <label className="block text-slate-300 font-bold mb-1">Issue Mission Rationale *</label>
             <textarea
               rows="2"
               required

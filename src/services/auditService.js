@@ -2,13 +2,18 @@ import { INITIAL_AUDIT_LOGS } from '../data/prototypeData';
 import { apiClient } from './apiClient';
 
 const STORAGE_KEY = 'kartavya_audit_logs';
+const LEGACY_STORAGE_KEY = 'astralogistics_audit_logs';
+
+const getLocalAuditLogs = () => {
+  const stored = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+  return stored ? JSON.parse(stored) : INITIAL_AUDIT_LOGS;
+};
 
 export const auditService = {
   getLogs: async (filters = {}) => {
     const res = await apiClient.get('/audit', filters);
     if (!res || res.isFallback) {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      let logs = stored ? JSON.parse(stored) : INITIAL_AUDIT_LOGS;
+      let logs = getLocalAuditLogs();
 
       if (filters.search) {
         const q = filters.search.toLowerCase();

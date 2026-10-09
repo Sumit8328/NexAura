@@ -285,6 +285,19 @@ export const RISK_ALERTS = [
     safetyStockThreshold: '18,000 Litres',
     estimatedStockoutDate: '2026-10-13 (04:30 UTC)',
     riskExplanation: 'Local burn rate elevated by 41% due to ongoing combat air patrol fueling. Route Cobalt is experiencing sandstorm disruptions, threatening the standard replenishment interval.',
+    primaryDriver: 'Combat Air Patrol Sortie Surge & Desert Sandstorm Delay',
+    causalFactors: [
+      { label: 'Burn Acceleration', value: '+41% Daily Draw', impactType: 'surge' },
+      { label: 'Route Hazard', value: 'Route Cobalt Sandstorm (Visibility <50m)', impactType: 'weather' },
+      { label: 'Transit Slippage', value: '+18 Hours Road Delay', impactType: 'lag' },
+      { label: 'Buffer Deficit', value: '-3,800 Litres Below Safety Floor', impactType: 'buffer' }
+    ],
+    timelineChain: [
+      { timestamp: 'T-72h', title: 'Sortie Tempo Escalation', description: 'CAP sortie tempo doubled to maintain regional air perimeter.', status: 'warning' },
+      { timestamp: 'T-24h', title: 'Route Cobalt Sandstorm Warning', description: 'Autonomous truck convoy convoy #12 speed restricted to 15 km/h.', status: 'alert' },
+      { timestamp: 'T-04h', title: 'Safety Buffer Breached', description: 'Reserve fell below mandatory 18,000L tactical safety floor.', status: 'critical' },
+      { timestamp: 'T+88h (Projected)', title: 'Total Dry Depletion', description: 'Depot fuel pumps exhausted unless resupply is authorized.', status: 'critical' }
+    ],
     recommendedNextAction: 'Authorize immediate 22,000L emergency rail tanker dispatch from Zenith Central Hub via Route Diamond.',
     confidenceLevel: '94% (High Confidence)',
     dataLimitationNote: 'Weather severity model estimates are based on 12-hour delayed satellite meteorology feeds.'
@@ -303,6 +316,19 @@ export const RISK_ALERTS = [
     safetyStockThreshold: '2,500 Kilograms',
     estimatedStockoutDate: '2026-10-12 (22:00 UTC)',
     riskExplanation: 'Mountain Pass Route Echo is currently obstructed by severe early blizzard conditions. Ground autonomous convoys cannot safely traverse the gradient.',
+    primaryDriver: 'Route Echo Pass Blockade & Thermal Caloric Consumption',
+    causalFactors: [
+      { label: 'Pass Impassable', value: 'Route Echo Snowpack (>1.8m Drift)', impactType: 'weather' },
+      { label: 'Ground Convoy Status', value: 'Halted at Valley Checkpoint 02', impactType: 'lag' },
+      { label: 'Sub-Zero Metabolic Burn', value: '+22% Caloric Intake Demand', impactType: 'surge' },
+      { label: 'Buffer Deficit', value: '-660 Kilograms Below Minimum', impactType: 'buffer' }
+    ],
+    timelineChain: [
+      { timestamp: 'T-48h', title: 'Early Alpine Blizzard Warning', description: 'Temperatures plunged to -24°C in high altitude pass.', status: 'warning' },
+      { timestamp: 'T-18h', title: 'Route Echo Pass Closure', description: 'Snowdrifts blocked road corridor; ground tracked convoys halted.', status: 'alert' },
+      { timestamp: 'T-02h', title: 'Safety Buffer Breached', description: 'Remaining stock fell to 1,840kg (3.5 operating days left).', status: 'critical' },
+      { timestamp: 'T+84h (Projected)', title: 'Ration Depletion', description: 'Station personnel forced onto emergency reduced calorie rations.', status: 'critical' }
+    ],
     recommendedNextAction: 'Approve Quad-VTOL Autonomous Heavy Air Bridge for 2,500kg immediate tactical drop.',
     confidenceLevel: '89% (Medium-High Confidence)',
     dataLimitationNote: 'Mountain telemetry sensor pack 04 is offline; snowpack depth estimated via radar altimetry.'
@@ -321,6 +347,18 @@ export const RISK_ALERTS = [
     safetyStockThreshold: '150 Kits',
     estimatedStockoutDate: '2026-10-14 (12:00 UTC)',
     riskExplanation: 'Repeated triage draws over the past 72 hours dropped inventory below the 150-kit threshold. Scheduled road convoy is subject to delay.',
+    primaryDriver: 'Triage Surge Draw & Regional Medical Courier Reallocation',
+    causalFactors: [
+      { label: 'Emergency Consumption', value: '+35 Kits in Past 72h Triage', impactType: 'surge' },
+      { label: 'Regional Replenishment', value: 'Scheduled Road Convoy Delayed 24h', impactType: 'lag' },
+      { label: 'Safety Floor Breach', value: '-40 Kits Below Emergency Threshold', impactType: 'buffer' },
+      { label: 'Lead Time Exposure', value: 'Specialized Sterile Handling Needed', impactType: 'weather' }
+    ],
+    timelineChain: [
+      { timestamp: 'T-72h', title: 'Mass Casualty Exercise & Triage', description: 'Rapid draw of trauma and surgical stabilization kits.', status: 'warning' },
+      { timestamp: 'T-20h', title: 'Stock Drops Below Threshold', description: 'Stock breached 150-kit redline; replacement shipment delayed.', status: 'alert' },
+      { timestamp: 'T+108h (Projected)', title: 'Zero Critical Trauma Kits', description: 'Forward aid post lacks critical chest seals and tourniquets.', status: 'critical' }
+    ],
     recommendedNextAction: 'Allocate 80 Tier-3 trauma kits from Aurora Station Alpha via rapid tactical courier.',
     confidenceLevel: '91% (High Confidence)',
     dataLimitationNote: 'Assumes hospital consumption rate remains at 72-hour trailing average.'
@@ -339,6 +377,16 @@ export const RISK_ALERTS = [
     safetyStockThreshold: '9,000 Litres',
     estimatedStockoutDate: '2026-10-14 (18:00 UTC)',
     riskExplanation: 'Primary filtration membrane B failure increased dependence on bottled emergency stores. Repair crew is en route.',
+    primaryDriver: 'Filtration Membrane B Failure & Elevated Hydration Demands',
+    causalFactors: [
+      { label: 'Filtration Outage', value: 'Membrane Module B Offline (-50% Output)', impactType: 'lag' },
+      { label: 'Ambient Temperature', value: '+36°C Desert Heat (+15% Hydration Draw)', impactType: 'weather' },
+      { label: 'Buffer Deficit', value: '-800 Litres Below Camp Reserve Floor', impactType: 'buffer' }
+    ],
+    timelineChain: [
+      { timestamp: 'T-36h', title: 'Membrane Pressure Anomaly', description: 'Sediment fouling reduced osmosis unit output.', status: 'warning' },
+      { timestamp: 'T-12h', title: 'Switched to Reserve Bladders', description: 'Camp switched to bottled and bladders; draw rate accelerated.', status: 'alert' }
+    ],
     recommendedNextAction: 'Stage secondary water bladders (5,000L) from Zenith Central Hub on standby transport.',
     confidenceLevel: '85% (Simulated Calculation)',
     dataLimitationNote: 'Dependent on scheduled delivery of replacement filtration membranes by Oct 11.'
@@ -357,6 +405,14 @@ export const RISK_ALERTS = [
     safetyStockThreshold: '30 Units',
     estimatedStockoutDate: '2026-10-16 (09:00 UTC)',
     riskExplanation: 'Intensive patrol tempo across rocky wadi terrain has increased replacement parts draw by 18%.',
+    primaryDriver: 'Rough Terrain Tread Abrasion & Scheduled Preventive Maintenance',
+    causalFactors: [
+      { label: 'Terrain Friction', value: 'Rocky Wadi Terrain (+18% Tread Wear)', impactType: 'weather' },
+      { label: 'Buffer Status', value: '-2 Units Under Recommended Spares Quota', impactType: 'buffer' }
+    ],
+    timelineChain: [
+      { timestamp: 'T-5d', title: 'Patrol Tempo Increased', description: 'Mechanized units logging 350+ km/week across basalt fields.', status: 'warning' }
+    ],
     recommendedNextAction: 'Include 20 tread units on routine weekly freight dispatch.',
     confidenceLevel: '82% (Baseline Linear Trend)',
     dataLimitationNote: 'Vehicle maintenance logs are manually digitized at 24-hour intervals.'
@@ -590,7 +646,7 @@ export const INITIAL_RECOMMENDATIONS = [
 
 export const INITIAL_SHIPMENTS = [
   {
-    id: 'AST-9042',
+    id: 'KTV-9042',
     origin: 'Zenith Central Hub',
     originCode: 'ZEN-00',
     destination: 'Sector-4 Forward Depot',
@@ -607,14 +663,14 @@ export const INITIAL_SHIPMENTS = [
     lastUpdate: 'Checkpoint Delta passing speed 92 km/h',
     timeline: [
       { status: 'Requested', timestamp: '2026-10-09T02:00:00Z', note: 'Automated requisition triggered by consumption telemetry' },
-      { status: 'Approved', timestamp: '2026-10-09T03:15:00Z', note: 'Approved by Logistics Command Station' },
+      { status: 'Approved', timestamp: '2026-10-09T03:15:00Z', note: 'Approved by KARTAVYA Logistics Command Station' },
       { status: 'Allocated', timestamp: '2026-10-09T04:30:00Z', note: 'Dedicated tanker railcar loaded and pressure tested' },
       { status: 'Dispatched', timestamp: '2026-10-09T06:00:00Z', note: 'Departed Zenith Central Railhead' },
       { status: 'In Transit', timestamp: '2026-10-09T09:30:00Z', note: 'Current position: Mile Marker 312, telemetry nominal' }
     ]
   },
   {
-    id: 'AST-9041',
+    id: 'KTV-9041',
     origin: 'Aurora Station Alpha',
     originCode: 'AUR-01',
     destination: 'Sector-4 Forward Depot',
@@ -638,7 +694,7 @@ export const INITIAL_SHIPMENTS = [
     ]
   },
   {
-    id: 'AST-9040',
+    id: 'KTV-9040',
     origin: 'Zenith Central Hub',
     originCode: 'ZEN-00',
     destination: 'Borealis Mountain Outpost',
@@ -662,7 +718,7 @@ export const INITIAL_SHIPMENTS = [
     ]
   },
   {
-    id: 'AST-9039',
+    id: 'KTV-9039',
     origin: 'Helios Coastal Base',
     originCode: 'HEL-02',
     destination: 'Vanguard Perimeter Camp',
@@ -687,7 +743,7 @@ export const INITIAL_SHIPMENTS = [
     ]
   },
   {
-    id: 'AST-9038',
+    id: 'KTV-9038',
     origin: 'Zenith Central Hub',
     originCode: 'ZEN-00',
     destination: 'Aurora Station Alpha',
@@ -713,7 +769,7 @@ export const INITIAL_SHIPMENTS = [
     ]
   },
   {
-    id: 'AST-9043',
+    id: 'KTV-9043',
     origin: 'Zenith Central Hub',
     originCode: 'ZEN-00',
     destination: 'Sector-4 Forward Depot',
@@ -743,7 +799,7 @@ export const INITIAL_AUDIT_LOGS = [
     actor: 'Logistics Controller (Local Operator)',
     action: 'Shipment Tracking Update',
     entityType: 'Shipment',
-    entityId: 'AST-9042',
+    entityId: 'KTV-9042',
     previousValue: 'Checkpoint Gamma',
     updatedValue: 'Mile Marker 312 • In Transit (62%)',
     reason: 'Telemetry beacon ping processed',

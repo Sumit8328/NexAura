@@ -5,9 +5,11 @@ import { syncService } from './syncService';
 
 const INVENTORY_STORAGE_KEY = 'kartavya_inventory';
 const TRANSACTIONS_STORAGE_KEY = 'kartavya_transactions';
+const LEGACY_INVENTORY_KEY = 'astralogistics_inventory';
+const LEGACY_TRANSACTIONS_KEY = 'astralogistics_transactions';
 
 const getLocalInventory = () => {
-  const stored = localStorage.getItem(INVENTORY_STORAGE_KEY);
+  const stored = localStorage.getItem(INVENTORY_STORAGE_KEY) || localStorage.getItem(LEGACY_INVENTORY_KEY);
   if (!stored) {
     localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(INITIAL_INVENTORY));
     return [...INITIAL_INVENTORY];
@@ -16,7 +18,7 @@ const getLocalInventory = () => {
 };
 
 const getLocalTransactions = () => {
-  const stored = localStorage.getItem(TRANSACTIONS_STORAGE_KEY);
+  const stored = localStorage.getItem(TRANSACTIONS_STORAGE_KEY) || localStorage.getItem(LEGACY_TRANSACTIONS_KEY);
   if (!stored) {
     localStorage.setItem(TRANSACTIONS_STORAGE_KEY, JSON.stringify(INITIAL_TRANSACTIONS));
     return [...INITIAL_TRANSACTIONS];

@@ -14,7 +14,11 @@ import {
   ArrowRight,
   ShieldAlert,
   Layers,
-  Info
+  Info,
+  Zap,
+  CloudSnow,
+  Radio,
+  BarChart3
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -23,6 +27,17 @@ import DataDisclaimerBanner from '../components/common/DataDisclaimerBanner';
 import { simulationService, DEFAULT_SCENARIO_CONFIG } from '../services/simulationService';
 import { useToast } from '../context/ToastContext';
 import { useSync } from '../context/SyncContext';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  Cell
+} from 'recharts';
 
 export const ScenarioLab = () => {
   const { success, info } = useToast();
@@ -35,6 +50,9 @@ export const ScenarioLab = () => {
   const [capacityReduction, setCapacityReduction] = useState(DEFAULT_SCENARIO_CONFIG.capacityReductionPercent);
   const [weatherLevel, setWeatherLevel] = useState(DEFAULT_SCENARIO_CONFIG.weatherSeverityLevel);
   const [isOfflineMode, setIsOfflineMode] = useState(syncStatus.state === 'Offline');
+
+  // Chart metric toggle: 'runway' | 'burn'
+  const [chartMetric, setChartMetric] = useState('runway');
 
   // Computed results state
   const [scenarioResult, setScenarioResult] = useState(null);
@@ -55,6 +73,45 @@ export const ScenarioLab = () => {
     };
     const impact = simulationService.calculateScenarioImpact(config);
     setScenarioResult(impact);
+  };
+
+  const handleApplyPreset = (presetKey) => {
+    switch (presetKey) {
+      case 'surge':
+        setDemandSurge(45);
+        setDelayDays(2);
+        setClosedRoute('ROUTE-02');
+        setCapacityReduction(20);
+        setWeatherLevel(3);
+        setIsOfflineMode(false);
+        setConnectivityState('Connected');
+        info('Preset Activated', 'Applied Operation Iron Shield: Demand Surge (+45%) with Route Cobalt Blockade.');
+        break;
+      case 'blizzard':
+        setDemandSurge(20);
+        setDelayDays(5);
+        setClosedRoute('ROUTE-04');
+        setCapacityReduction(35);
+        setWeatherLevel(5);
+        setIsOfflineMode(false);
+        setConnectivityState('Connected');
+        info('Preset Activated', 'Applied Alpine Blizzard Crisis: Mountain Pass Echo Blocked with 5-day delay.');
+        break;
+      case 'blackout':
+        setDemandSurge(15);
+        setDelayDays(3);
+        setClosedRoute('ROUTE-01');
+        setCapacityReduction(25);
+        setWeatherLevel(2);
+        setIsOfflineMode(true);
+        setConnectivityState('Offline');
+        info('Preset Activated', 'Applied Communications Blackout: Forced Offline local cache resilience mode.');
+        break;
+      case 'baseline':
+      default:
+        handleResetScenario();
+        break;
+    }
   };
 
   const handleApplyScenario = () => {
@@ -82,6 +139,18 @@ export const ScenarioLab = () => {
   const depots = scenarioResult?.depots || [];
   const adjustments = scenarioResult?.recommendedAdjustments || [];
 
+  // Chart data formatted for Recharts BarChart
+  const comparisonChartData = depots.map(d => ({
+    name: d.name.split(' ')[0], // Sector-4, Borealis, Vanguard
+    fullName: d.name,
+    unit: d.unit,
+    'Baseline Runway (Days)': d.baseCoverage,
+    'Scenario Runway (Days)': d.scenarioCoverage,
+    'Baseline Draw': d.baseDailyDraw,
+    'Scenario Burn': d.scenarioDailyDraw,
+    riskScore: d.scenarioRiskScore
+  }));
+
   return (
     <div className="space-y-6">
       {/* Banner */}
@@ -89,6 +158,47 @@ export const ScenarioLab = () => {
         mode="simulation"
         customText="Stress Scenario Sandbox Engine. Compound stressors recalculate forward stockout trajectories, delivery delays, and automated mitigation recommendations."
       />
+
+      {/* Preset Scenario Cockpit Bar */}
+      <Card>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2 text-slate-300">
+            <Zap className="w-4 h-4 text-cyan-400" />
+            <span className="font-bold text-white uppercase text-[11px]">1-Click Operational Presets:</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => handleApplyPreset('surge')}
+              className="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold transition-all flex items-center gap-1.5"
+            >
+              <Zap className="w-3.5 h-3.5 text-rose-400" />
+              <span>Operation Iron Shield (+45% Surge)</span>
+            </button>
+            <button
+              onClick={() => handleApplyPreset('blizzard')}
+              className="px-3 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold transition-all flex items-center gap-1.5"
+            >
+              <CloudSnow className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Alpine Blizzard (Pass Blocked)</span>
+            </button>
+            <button
+              onClick={() => handleApplyPreset('blackout')}
+              className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold transition-all flex items-center gap-1.5"
+            >
+              <Radio className="w-3.5 h-3.5 text-amber-400" />
+              <span>Comms Blackout (Offline)</span>
+            </button>
+            <button
+              onClick={() => handleApplyPreset('baseline')}
+              className="px-3 py-1.5 rounded-lg bg-midnight-950 hover:bg-midnight-800 text-slate-400 hover:text-white border border-midnight-700 font-bold transition-all flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Steady State</span>
+            </button>
+          </div>
+        </div>
+      </Card>
 
       {/* Main Grid: Control Cockpit (5 cols) & Comparison Results (7 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -317,6 +427,110 @@ export const ScenarioLab = () => {
                   {comparison?.transportThroughput.scenario} Capacity
                 </div>
               </div>
+            </div>
+          </Card>
+
+          {/* Dynamic Comparison Chart Card */}
+          <Card
+            title="Comparative Stress Dynamics (Depot Level)"
+            subtitle="Side-by-side parametric variance across forward positions"
+            icon={BarChart3}
+            action={
+              <div className="flex items-center gap-1 bg-midnight-950 p-1 rounded-lg border border-midnight-750 text-xs font-mono">
+                <button
+                  onClick={() => setChartMetric('runway')}
+                  className={`px-2.5 py-1 rounded transition-colors font-bold ${
+                    chartMetric === 'runway'
+                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Stock Runway (Days)
+                </button>
+                <button
+                  onClick={() => setChartMetric('burn')}
+                  className={`px-2.5 py-1 rounded transition-colors font-bold ${
+                    chartMetric === 'burn'
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Daily Burn Rate
+                </button>
+              </div>
+            }
+          >
+            <div className="h-64 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={comparisonChartData} margin={{ top: 10, right: 15, left: 0, bottom: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.6} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#64748b" 
+                    fontSize={11} 
+                    fontFamily="monospace"
+                    tickLine={false}
+                  />
+                  <YAxis 
+                    stroke="#64748b" 
+                    fontSize={11} 
+                    fontFamily="monospace"
+                    tickLine={false}
+                    tickFormatter={(v) => chartMetric === 'burn' && Number(v) > 999 ? `${(v/1000).toFixed(0)}k` : v}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#090e1a',
+                      borderColor: '#334155',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontFamily: 'monospace',
+                      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.6)'
+                    }}
+                    labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
+                    formatter={(val, name) => [
+                      chartMetric === 'runway' ? `${val} Days` : Number(val).toLocaleString(),
+                      name
+                    ]}
+                  />
+                  <Legend 
+                    verticalAlign="top" 
+                    height={32} 
+                    wrapperStyle={{ fontSize: '11px', fontFamily: 'monospace' }}
+                  />
+                  {chartMetric === 'runway' ? (
+                    <>
+                      <Bar 
+                        dataKey="Baseline Runway (Days)" 
+                        fill="#06b6d4" 
+                        radius={[4, 4, 0, 0]} 
+                        maxBarSize={48} 
+                      />
+                      <Bar 
+                        dataKey="Scenario Runway (Days)" 
+                        fill="#f43f5e" 
+                        radius={[4, 4, 0, 0]} 
+                        maxBarSize={48} 
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Bar 
+                        dataKey="Baseline Draw" 
+                        fill="#64748b" 
+                        radius={[4, 4, 0, 0]} 
+                        maxBarSize={48} 
+                      />
+                      <Bar 
+                        dataKey="Scenario Burn" 
+                        fill="#f59e0b" 
+                        radius={[4, 4, 0, 0]} 
+                        maxBarSize={48} 
+                      />
+                    </>
+                  )}
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </Card>
 

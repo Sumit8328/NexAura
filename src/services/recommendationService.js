@@ -2,11 +2,13 @@ import { INITIAL_RECOMMENDATIONS } from '../data/prototypeData';
 import { apiClient } from './apiClient';
 import { auditService } from './auditService';
 import { syncService } from './syncService';
+import { shipmentService } from './shipmentService';
 
 const RECOMMENDATIONS_STORAGE_KEY = 'kartavya_recommendations';
+const LEGACY_RECOMMENDATIONS_KEY = 'astralogistics_recommendations';
 
 const getLocalRecs = () => {
-  const stored = localStorage.getItem(RECOMMENDATIONS_STORAGE_KEY);
+  const stored = localStorage.getItem(RECOMMENDATIONS_STORAGE_KEY) || localStorage.getItem(LEGACY_RECOMMENDATIONS_KEY);
   if (!stored) {
     localStorage.setItem(RECOMMENDATIONS_STORAGE_KEY, JSON.stringify(INITIAL_RECOMMENDATIONS));
     return [...INITIAL_RECOMMENDATIONS];
@@ -193,6 +195,65 @@ export const recommendationService = {
     return res;
   },
 
+  createRecommendation: async ({
+    location = 'Sector-4 Forward Depot',
+    supplyCategory = 'Fuel (JP-8 Synthetic)',
+    suggestedReplenishmentQty = 15000,
+    transportMode = 'Autonomous Armored Rail Tanker',
+    priority = 'High',
+    explanation = 'Manually generated algorithmic replenishment requisition based on forward operational telemetry analysis.',
+    actor = 'Logistics Command (Local)'
+  }) => {
+    const recs = getLocalRecs();
+    const nextNum = recs.length + 1;
+    const newId = `REC-30${nextNum}`;
+    
+    // Determine unit
+    let unit = 'Litres';
+    if (supplyCategory.includes('Rations')) unit = 'Kilograms';
+    else if (supplyCategory.includes('Medical')) unit = 'Kits';
+    else if (supplyCategory.includes('Water')) unit = 'Litres';
+    else if (supplyCategory.includes('Batteries')) unit = 'Units';
+    else if (supplyCategory.includes('Spares')) unit = 'Units';
+
+    const newRec = {
+      id: newId,
+      priority,
+      location,
+      supplyCategory,
+      currentStock: `Dynamic Reserves`,
+      forecastDemand: `Surge Pattern (${suggestedReplenishmentQty.toLocaleString()} ${unit})`,
+      estimatedShortageRisk: `${priority === 'Critical' ? 'Imminent (Day 2.8)' : 'Buffer Breach (Day 4.5)'}`,
+      suggestedReplenishmentQty: Number(suggestedReplenishmentQty),
+      unit,
+      transportMode,
+      routeAlternatives: [
+        { name: 'Corridor Diamond (Hyper-Rail Mainline)', riskLevel: 'Low Hazard', etaHours: 4.5 },
+        { name: 'Skybridge Air Corridor 09 (VTOL)', riskLevel: 'Severe Weather', etaHours: 2.1 }
+      ],
+      explanation,
+      dataLimitations: 'Synthetic heuristic calculation generated during local command session.',
+      status: 'Pending Review',
+      illustrativeETA: '4.8 Hours',
+      generatedAt: new Date().toISOString()
+    };
+
+    recs.unshift(newRec);
+    saveLocalRecs(recs);
+
+    await auditService.logAction({
+      actor,
+      action: 'Recommendation Generated',
+      entityType: 'Replenishment Recommendation',
+      entityId: newId,
+      previousValue: 'None',
+      updatedValue: `Pending Review (${newRec.suggestedReplenishmentQty.toLocaleString()} ${unit})`,
+      reason: explanation
+    });
+
+    return { success: true, recommendation: newRec };
+  },
+
   executeRecommendation: async (id, actor = 'Logistics Officer (Local)') => {
     const recs = getLocalRecs();
     const idx = recs.findIndex(r => r.id === id);
@@ -203,10 +264,22 @@ export const recommendationService = {
       throw new Error('Only Approved or Modified recommendations can be transitioned to Executed.');
     }
 
+    // Automatically stage a real Shipment in active transit tracking!
+    const shipmentResult = await shipmentService.createShipment({
+      recommendationId: rec.id,
+      destination: rec.location,
+      category: rec.supplyCategory,
+      quantity: rec.suggestedReplenishmentQty,
+      unit: rec.unit,
+      transportOption: rec.transportMode,
+      priority: rec.priority
+    });
+
     const updated = {
       ...rec,
       status: 'Executed',
-      executedAt: new Date().toISOString()
+      executedAt: new Date().toISOString(),
+      stagedShipmentId: shipmentResult?.shipment?.id || 'KTV-AUTO'
     };
     recs[idx] = updated;
     saveLocalRecs(recs);
@@ -217,11 +290,11 @@ export const recommendationService = {
       entityType: 'Replenishment Recommendation',
       entityId: id,
       previousValue: rec.status,
-      updatedValue: 'Executed (Handed off to Depot Dispatch)',
-      reason: 'Formal requisition order cut and queued for transport staging'
+      updatedValue: `Executed (Manifest ${shipmentResult?.shipment?.id || 'Staged'})`,
+      reason: 'Formal requisition order cut and automatically transferred to active freight dispatch queue.'
     });
 
-    return { success: true, recommendation: updated };
+    return { success: true, recommendation: updated, shipment: shipmentResult?.shipment };
   },
 
   resetDefaults: () => {

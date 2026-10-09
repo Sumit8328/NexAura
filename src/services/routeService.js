@@ -2,13 +2,18 @@ import { ROUTES, LOCATIONS } from '../data/prototypeData';
 import { apiClient } from './apiClient';
 
 const ROUTES_STORAGE_KEY = 'kartavya_routes';
+const LEGACY_ROUTES_KEY = 'astralogistics_routes';
+
+const getLocalRoutes = () => {
+  const stored = localStorage.getItem(ROUTES_STORAGE_KEY) || localStorage.getItem(LEGACY_ROUTES_KEY);
+  return stored ? JSON.parse(stored) : ROUTES;
+};
 
 export const routeService = {
   getRoutes: async () => {
     const res = await apiClient.get('/routes');
     if (!res || res.isFallback) {
-      const stored = localStorage.getItem(ROUTES_STORAGE_KEY);
-      const routes = stored ? JSON.parse(stored) : ROUTES;
+      const routes = getLocalRoutes();
       return {
         data: routes,
         locations: LOCATIONS,
@@ -22,8 +27,7 @@ export const routeService = {
   getRouteById: async (id) => {
     const res = await apiClient.get(`/routes/${id}`);
     if (!res || res.isFallback) {
-      const stored = localStorage.getItem(ROUTES_STORAGE_KEY);
-      const routes = stored ? JSON.parse(stored) : ROUTES;
+      const routes = getLocalRoutes();
       const route = routes.find(r => r.id === id);
       if (!route) throw new Error(`Route ${id} not found.`);
       return { data: route, isPrototypeData: true };
@@ -32,8 +36,7 @@ export const routeService = {
   },
 
   updateRouteStatus: async (id, status, simulatedDisruption) => {
-    const stored = localStorage.getItem(ROUTES_STORAGE_KEY);
-    const routes = stored ? JSON.parse(stored) : [...ROUTES];
+    const routes = [...getLocalRoutes()];
     const index = routes.findIndex(r => r.id === id);
     if (index !== -1) {
       routes[index] = {

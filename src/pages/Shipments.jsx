@@ -76,7 +76,7 @@ export const Shipments = () => {
     const currIdx = SHIPMENT_STATUSES.indexOf(shipment.status);
     const nextStatus = currIdx < SHIPMENT_STATUSES.length - 1 ? SHIPMENT_STATUSES[currIdx + 1] : shipment.status;
     setTransitionTargetStatus(nextStatus);
-    setTransitionNote(`Progressed to ${nextStatus} via command centre validation`);
+    setTransitionNote(`Progressed to ${nextStatus} via KARTAVYA command validation`);
     setIsTransitionModalOpen(true);
   };
 
@@ -194,7 +194,17 @@ export const Shipments = () => {
               {shipments.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">
-                    No shipments found matching the selected filter criteria.
+                    <div className="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
+                      <Truck className="w-8 h-8 text-slate-600 mb-1" />
+                      <p className="font-semibold text-slate-300 font-mono text-sm">No Active Dispatches Found</p>
+                      <p className="text-xs text-slate-400 font-sans">No freight tracks matched filter criteria in KARTAVYA transit registry.</p>
+                      <button 
+                        onClick={() => { setStatusFilter('All'); setDestinationFilter('All'); setSearchTerm(''); }}
+                        className="mt-2 text-xs font-mono text-cyan-400 hover:text-cyan-300 underline"
+                      >
+                        Reset All Filters
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -434,10 +444,13 @@ export const Shipments = () => {
             <label className="block text-slate-300 font-bold mb-1">Target Status *</label>
             <select
               value={transitionTargetStatus}
-              onChange={(e) => setTransitionTargetStatus(e.target.value)}
+              onChange={(e) => {
+                setTransitionTargetStatus(e.target.value);
+                setTransitionNote(`Progressed to ${e.target.value} via KARTAVYA command validation`);
+              }}
               className="w-full bg-midnight-950 border border-midnight-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400 text-sm font-mono"
             >
-              {SHIPMENT_STATUSES.map(st => (
+              {selectedShipment && SHIPMENT_STATUSES.slice(SHIPMENT_STATUSES.indexOf(selectedShipment.status) + 1).map(st => (
                 <option key={st} value={st}>{st}</option>
               ))}
             </select>
@@ -445,6 +458,23 @@ export const Shipments = () => {
 
           <div>
             <label className="block text-slate-300 font-bold mb-1">Checkpoint / Status Note *</label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {[
+                `Cleared waypoint check`,
+                `Cargo inspected and verified`,
+                `Docked at depot bay`,
+                `Transferred to forward custody`
+              ].map((preset, idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  onClick={() => setTransitionNote(preset)}
+                  className="px-2 py-0.5 rounded bg-midnight-800 hover:bg-cyan-950 border border-midnight-700 text-[10px] text-slate-300 hover:text-cyan-300 transition-colors"
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
             <textarea
               rows="2"
               required

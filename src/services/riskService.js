@@ -2,13 +2,27 @@ import { RISK_ALERTS } from '../data/prototypeData';
 import { apiClient } from './apiClient';
 
 const STORAGE_KEY = 'kartavya_risk_alerts';
+const LEGACY_STORAGE_KEY = 'astralogistics_risk_alerts';
+
+const getLocalRisks = () => {
+  const stored = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (!stored) return RISK_ALERTS;
+  try {
+    const parsed = JSON.parse(stored);
+    return parsed.map(r => {
+      const base = RISK_ALERTS.find(b => b.id === r.id);
+      return base ? { ...base, ...r, causalFactors: base.causalFactors || r.causalFactors, timelineChain: base.timelineChain || r.timelineChain, primaryDriver: base.primaryDriver || r.primaryDriver } : r;
+    });
+  } catch {
+    return RISK_ALERTS;
+  }
+};
 
 export const riskService = {
   getRisks: async (filters = {}) => {
     const res = await apiClient.get('/risks', filters);
     if (!res || res.isFallback) {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      let risks = stored ? JSON.parse(stored) : RISK_ALERTS;
+      let risks = getLocalRisks();
 
       if (filters.severity && filters.severity !== 'All') {
         risks = risks.filter(r => r.severity.toLowerCase() === filters.severity.toLowerCase());

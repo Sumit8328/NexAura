@@ -122,12 +122,64 @@ export const DemandForecast = () => {
         </div>
       </Card>
 
+      {/* Dynamic Summary KPI Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-mono">
+        <div className="p-4 rounded-xl border border-midnight-700 bg-midnight-900/90 shadow-card">
+          <div className="text-[10px] uppercase font-bold text-slate-400">Peak Projected Burn</div>
+          <div className="text-xl font-bold text-white mt-1">
+            {forecastState?.peakDemand ? Number(forecastState.peakDemand).toLocaleString() : '—'}{' '}
+            <span className="text-xs font-normal text-slate-400">{forecastState?.unit}/day</span>
+          </div>
+          <div className="text-[11px] text-cyan-400 mt-1 flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" />
+            <span>Mean: {forecastState?.avgDemand?.toLocaleString()} {forecastState?.unit}/d</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl border border-midnight-700 bg-midnight-900/90 shadow-card">
+          <div className="text-[10px] uppercase font-bold text-slate-400">Buffer Breach Point</div>
+          <div className={`text-xl font-bold mt-1 ${forecastState?.breachDate?.includes('None') ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {forecastState?.breachDate || 'Analyzing...'}
+          </div>
+          <div className="text-[11px] text-slate-400 mt-1">
+            {forecastState?.breachDate?.includes('None') ? 'Buffer intact throughout' : 'Emergency order mandated'}
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl border border-midnight-700 bg-midnight-900/90 shadow-card">
+          <div className="text-[10px] uppercase font-bold text-slate-400">Lowest Projected Reserve</div>
+          <div className="text-xl font-bold text-amber-400 mt-1">
+            {forecastState?.minReserve ? Number(forecastState.minReserve).toLocaleString() : '0'}{' '}
+            <span className="text-xs font-normal text-slate-400">{forecastState?.unit}</span>
+          </div>
+          <div className="text-[11px] text-slate-400 mt-1">
+            Trough Expected: <span className="text-slate-200">{forecastState?.minReserveDate}</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl border border-midnight-700 bg-midnight-900/90 shadow-card">
+          <div className="text-[10px] uppercase font-bold text-slate-400">Model Confidence Rating</div>
+          <div className="text-xl font-bold text-cyan-400 mt-1">
+            {forecastState?.confidenceScore || 91.4}%
+          </div>
+          <div className="text-[11px] text-slate-400 mt-1">
+            {horizon}-Day Heuristic CI (p&lt;0.05)
+          </div>
+        </div>
+      </div>
+
       {/* Main Interactive Forecast Chart Card */}
       <Card
         title={`Consumption Forecast & Reserve Depletion (${horizon}-Day Projection)`}
-        subtitle={`${category} • ${location} • Confidence Interval: 91.4%`}
+        subtitle={`${category} • ${location} • Model Confidence: ${forecastState?.confidenceScore || 91.4}%`}
         icon={TrendingUp}
-        badge={<Badge variant="cyan" size="sm">Uncertainty Bounds Active</Badge>}
+        badge={
+          <div className="flex items-center gap-1.5">
+            <Badge variant={horizon === 30 ? 'amber' : 'cyan'} size="sm">
+              {horizon}-Day Bounds Active
+            </Badge>
+          </div>
+        }
       >
         <div className="h-80 w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">

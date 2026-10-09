@@ -30,7 +30,7 @@ class ApiClient {
     const defaultHeaders = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'X-Client-Agent': 'Kartavya-CommandCentre-v1.0'
+      'X-Client-Agent': 'KARTAVYA-CommandCentre-v1.0'
     };
 
     const config = {

@@ -15,6 +15,7 @@ import {
   Radio,
   Cpu
 } from 'lucide-react';
+import KartavyaLogo from '../common/KartavyaLogo';
 
 export const Sidebar = ({ isCollapsed, onToggleCollapse, mobileOpen, onCloseMobile }) => {
   const location = useLocation();
@@ -35,29 +36,14 @@ export const Sidebar = ({ isCollapsed, onToggleCollapse, mobileOpen, onCloseMobi
     <div className="flex flex-col h-full bg-midnight-900 border-r border-midnight-750 select-none">
       {/* Brand Header */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-midnight-750 bg-midnight-950/60">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-700 p-0.5 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,240,255,0.4)]">
-            <div className="w-full h-full bg-midnight-950 rounded-[7px] flex items-center justify-center">
-              <Radio className="w-5 h-5 text-cyan-400 animate-pulse" />
-            </div>
-          </div>
-          {!isCollapsed && (
-            <div className="min-w-0 transition-opacity duration-200">
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-white text-base tracking-wider font-mono">KARTAVYA</span>
-                <span className="font-semibold text-cyan-400 text-xs font-mono px-1 py-0.2 rounded bg-cyan-950/80 border border-cyan-800/60">AI</span>
-              </div>
-              <p className="text-[10px] text-slate-400 font-mono tracking-tight truncate">
-                Predict • Deliver • Ready
-              </p>
-            </div>
-          )}
-        </div>
+        <NavLink to="/" className="flex items-center overflow-hidden hover:opacity-95 transition-opacity">
+          <KartavyaLogo collapsed={isCollapsed} />
+        </NavLink>
 
         {/* Toggle Collapse on Desktop */}
         <button
           onClick={onToggleCollapse}
-          className="hidden md:flex p-1.5 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 transition-colors"
+          className="hidden md:flex p-1.5 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 transition-colors ml-2"
           title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

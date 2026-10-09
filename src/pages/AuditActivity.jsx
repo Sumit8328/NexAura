@@ -12,7 +12,8 @@ import {
   Truck,
   CheckSquare,
   AlertTriangle,
-  Server
+  Server,
+  RefreshCw
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -102,6 +103,15 @@ export const AuditActivity = () => {
             </select>
 
             <Button
+              variant="outline"
+              size="sm"
+              icon={RefreshCw}
+              onClick={() => { loadLogs(); info('Audit Trail Refreshed', 'Journal entries updated from local state.'); }}
+            >
+              Refresh
+            </Button>
+
+            <Button
               variant="secondary"
               size="sm"
               icon={RotateCcw}
@@ -122,7 +132,7 @@ export const AuditActivity = () => {
         <div className="space-y-3">
           {logs.length === 0 ? (
             <div className="py-12 text-center text-slate-400 font-mono text-xs">
-              No audit logs found matching current search filters.
+              No audit events found matching current search filters in KARTAVYA custody journal.
             </div>
           ) : (
             logs.map((log) => {

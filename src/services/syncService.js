@@ -2,10 +2,12 @@ import { auditService } from './auditService';
 
 const SYNC_QUEUE_KEY = 'kartavya_sync_queue';
 const SYNC_STATUS_KEY = 'kartavya_sync_status';
+const LEGACY_QUEUE_KEY = 'astralogistics_sync_queue';
+const LEGACY_STATUS_KEY = 'astralogistics_sync_status';
 
 export const syncService = {
   getStatus: () => {
-    const saved = localStorage.getItem(SYNC_STATUS_KEY);
+    const saved = localStorage.getItem(SYNC_STATUS_KEY) || localStorage.getItem(LEGACY_STATUS_KEY);
     return saved ? JSON.parse(saved) : {
       state: 'Connected', // 'Connected' | 'Offline' | 'Pending Synchronization' | 'Synchronization Error'
       lastSyncedAt: new Date(Date.now() - 3 * 60 * 1000).toISOString(),
@@ -18,10 +20,11 @@ export const syncService = {
   setStatus: (status) => {
     localStorage.setItem(SYNC_STATUS_KEY, JSON.stringify(status));
     window.dispatchEvent(new CustomEvent('kartavya_sync_change', { detail: status }));
+    window.dispatchEvent(new CustomEvent('astralogistics_sync_change', { detail: status }));
   },
 
   getQueue: () => {
-    const queue = localStorage.getItem(SYNC_QUEUE_KEY);
+    const queue = localStorage.getItem(SYNC_QUEUE_KEY) || localStorage.getItem(LEGACY_QUEUE_KEY);
     return queue ? JSON.parse(queue) : [];
   },
 

@@ -1,14 +1,26 @@
-# KARTAVYA — AI Logistics Command Centre
+# KARTAVYA — Intelligent Logistics Command Platform
 
-> **Predict Early. Deliver Smarter. Stay Ready.**
+> **Predict. Prepare. Deliver.**
 
-**KARTAVYA** is an enterprise-grade AI-powered Predictive Logistics & Forward Supply Chain Command Centre designed for mission-critical logistics operations, forward operating bases, and high-threat transport networks.
+KARTAVYA is a modern, intelligent, resilient logistics and supply-chain decision-support platform designed for mission-critical operations, forward operating depots, and multi-modal freight networks.
 
-This repository contains the **complete, standalone, responsive frontend** designed for high-density operational monitoring, human-in-the-loop decision verification, and seamless integration with a Python FastAPI backend via Antigravity.
+This repository contains the **complete, standalone, responsive frontend** engineered for high-density operational monitoring, human-in-the-loop decision verification, and seamless integration with a Python FastAPI backend via Antigravity.
 
 ---
 
-## 1. Tech Stack
+## 1. Brand Identity & Design Language
+
+- **Product Name**: KARTAVYA
+- **Core Tagline**: *"Predict. Prepare. Deliver."*
+- **Mission**: Providing operational commanders, supply officers, and logistics directors with real-time early warning telemetry, forward stock runway estimations, autonomous replenishment proposals, and multi-modal corridor intelligence.
+- **Midnight Dark Surfaces**: Backgrounds engineered with `#060a12`, `#0b1120`, and `#0f172a` for low eye strain in 24/7 command environments.
+- **Electric Cyan (`#00f0ff` / `#06b6d4`)**: Active telemetry streams, real-time vehicle vectors, and high-confidence predictions.
+- **Hazard Amber (`#f59e0b`) & Crimson (`#f43f5e`)**: Early warning stockout signals, weather closures, and corridor bottlenecks.
+- **Density & Hierarchy**: Compact typography (`Inter` + `JetBrains Mono`), corner reticles, micro-status indicators, and instant drill-downs.
+
+---
+
+## 2. Tech Stack
 
 - **Framework**: React 18 + Vite 5
 - **Routing**: React Router DOM v6
@@ -17,15 +29,6 @@ This repository contains the **complete, standalone, responsive frontend** desig
 - **Data Visualization**: Recharts (Composed time-series, historical actuals, predictive bounds, safety thresholds)
 - **GIS & Route Visualization**: Custom Tactical Vector GIS Engine + Leaflet / OpenStreetMap compatibility
 - **State Management & Resiliency**: Built-in decoupled service layer with local reactive storage and offline buffer queue
-
----
-
-## 2. Visual Architecture & Design Language
-
-- **Midnight Dark Surfaces**: Backgrounds engineered with `#060a12`, `#0b1120`, and `#0f172a` for low eye strain in 24/7 command environments.
-- **Electric Cyan (`#00f0ff` / `#06b6d4`)**: Active telemetry streams, real-time vehicle vectors, and high-confidence predictions.
-- **Hazard Amber (`#f59e0b`) & Crimson (`#f43f5e`)**: Early warning stockout signals, weather closures, and corridor bottlenecks.
-- **Density & Hierarchy**: Compact typography (`Inter` + `JetBrains Mono`), corner reticles, micro-status indicators, and instant drill-downs.
 
 ---
 
@@ -50,9 +53,9 @@ The project is structured with a clean separation of concerns:
 ```
 src/
 ├── components/
-│   ├── common/         # Button, Badge, Card, Modal, Drawer, StatCard, DataDisclaimerBanner
+│   ├── common/         # Button, Badge, Card, Modal, Drawer, StatCard, DataDisclaimerBanner, KartavyaLogo, LoadingScreen
 │   ├── layout/         # AppShell, Sidebar, TopNav, SyncStatusWidget
-│   └── maps/           # Tactical Vector GIS Engine (LogisticsMap & CompactMap)
+│   └── maps/           # LogisticsMap, CompactMap (Tactical GIS Vector Engine)
 ├── context/
 │   ├── ToastContext.jsx  # Notification alerts & toast queue
 │   └── SyncContext.jsx   # Connectivity status, offline queue, manual sync
@@ -106,8 +109,8 @@ src/
 
 ### Installation
 ```bash
-# Clone or extract project
-cd kartavya-command-centre
+# Navigate to project directory
+cd astralogistics-command-centre
 
 # Install dependencies
 npm install

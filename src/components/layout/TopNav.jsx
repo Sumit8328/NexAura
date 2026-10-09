@@ -44,6 +44,11 @@ export const TopNav = ({ onOpenMobile, isCollapsed }) => {
 
   const { title, category } = getPageInfo();
 
+  // Dynamic browser tab title synchronization
+  React.useEffect(() => {
+    document.title = `${title} | KARTAVYA — Predict. Prepare. Deliver.`;
+  }, [title]);
+
   const handleRefresh = async () => {
     await triggerManualSync();
     info('Telemetry Refreshed', 'Refreshed local operational telemetry buffers.');
@@ -52,7 +57,7 @@ export const TopNav = ({ onOpenMobile, isCollapsed }) => {
   const notifications = [
     { id: 1, title: 'Critical Fuel Alert: Sector-4 Depot', desc: 'Stock coverage dropped to 3.7 days. Burn rate +41%.', time: '12m ago', type: 'critical', path: '/risk' },
     { id: 2, title: 'Corridor Echo Impassable', desc: 'Winter blizzard blocked Alpine Ridge Pass. Airdrop required.', time: '34m ago', type: 'critical', path: '/routes' },
-    { id: 3, title: 'Shipment AST-9042 Telemetry nominal', desc: 'Rail Tanker reached Mile Marker 312 on Corridor Diamond.', time: '1h ago', type: 'info', path: '/shipments' },
+    { id: 3, title: 'Shipment KTV-9042 Telemetry nominal', desc: 'Rail Tanker reached Mile Marker 312 on Corridor Diamond.', time: '1h ago', type: 'info', path: '/shipments' },
     { id: 4, title: 'New Replenishment Proposal', desc: 'Suggested 25,000L JP-8 dispatch pending officer validation.', time: '2h ago', type: 'warning', path: '/recommendations' }
   ];
 
@@ -69,7 +74,12 @@ export const TopNav = ({ onOpenMobile, isCollapsed }) => {
 
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
-            <span>KARTAVYA</span>
+            <span 
+              className="font-semibold text-slate-300 hover:text-cyan-400 cursor-pointer transition-colors"
+              onClick={() => navigate('/')}
+            >
+              KARTAVYA
+            </span>
             <ChevronRight className="w-3 h-3 text-slate-600" />
             <span className="text-cyan-400/90 truncate">{category}</span>
           </div>

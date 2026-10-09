@@ -4,6 +4,7 @@ import { auditService } from './auditService';
 import { syncService } from './syncService';
 
 const SHIPMENTS_STORAGE_KEY = 'kartavya_shipments';
+const LEGACY_SHIPMENTS_KEY = 'astralogistics_shipments';
 
 export const SHIPMENT_STATUSES = [
   'Requested',
@@ -17,7 +18,7 @@ export const SHIPMENT_STATUSES = [
 ];
 
 const getLocalShipments = () => {
-  const stored = localStorage.getItem(SHIPMENTS_STORAGE_KEY);
+  const stored = localStorage.getItem(SHIPMENTS_STORAGE_KEY) || localStorage.getItem(LEGACY_SHIPMENTS_KEY);
   if (!stored) {
     localStorage.setItem(SHIPMENTS_STORAGE_KEY, JSON.stringify(INITIAL_SHIPMENTS));
     return [...INITIAL_SHIPMENTS];
@@ -145,6 +146,50 @@ export const shipmentService = {
     });
 
     return { success: true, shipment: updatedShipment };
+  },
+
+  createShipment: async (shipmentData) => {
+    const currentList = getLocalShipments();
+    const newId = shipmentData.id || `KTV-${Math.floor(9044 + currentList.length)}`;
+    const newShipment = {
+      id: newId,
+      origin: shipmentData.origin || 'Zenith Central Hub',
+      originCode: shipmentData.originCode || 'ZNT',
+      destination: shipmentData.destination || 'Sector-4 Forward Depot',
+      destinationCode: shipmentData.destinationCode || (shipmentData.destination?.includes('Borealis') ? 'BOR' : shipmentData.destination?.includes('Vanguard') ? 'VNG' : 'SEC4'),
+      category: shipmentData.category || 'Fuel (JP-8 Synthetic)',
+      quantity: Number(shipmentData.quantity) || 15000,
+      unit: shipmentData.unit || 'Litres',
+      transportOption: shipmentData.transportOption || 'Autonomous Rail Tanker',
+      routeCode: shipmentData.routeCode || 'COR-DIAMOND',
+      priority: shipmentData.priority || 'Critical',
+      status: 'Requested',
+      progressPercent: 10,
+      illustrativeETA: shipmentData.illustrativeETA || '6.5 Hours',
+      lastUpdate: 'Requisition manifest generated from approved replenishment proposal',
+      timeline: [
+        {
+          status: 'Requested',
+          timestamp: new Date().toISOString(),
+          note: `Requisition order staged from proposal ${shipmentData.recommendationId || 'REC-AUTO'}`
+        }
+      ]
+    };
+
+    currentList.unshift(newShipment);
+    saveLocalShipments(currentList);
+
+    await auditService.logAction({
+      actor: 'Logistics Command (Local)',
+      action: 'Shipment Manifest Staged',
+      entityType: 'Shipment Tracking',
+      entityId: newId,
+      previousValue: 'None',
+      updatedValue: `Requested (${newShipment.quantity.toLocaleString()} ${newShipment.unit})`,
+      reason: `Allocated from recommendation ${shipmentData.recommendationId || 'REC-AUTO'}`
+    });
+
+    return { success: true, shipment: newShipment };
   },
 
   resetDefaults: () => {
