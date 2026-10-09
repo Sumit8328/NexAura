@@ -12,29 +12,29 @@ export const SyncStatusWidget = () => {
     switch (syncStatus.state) {
       case 'Connected':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#10b981]" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#55E6C1]/10 border border-[#55E6C1]/30 text-[#55E6C1] text-xs font-mono font-medium">
+            <span className="w-2 h-2 rounded-full bg-[#55E6C1] animate-pulse shadow-[0_0_6px_#55E6C1]" />
             <span className="hidden sm:inline">RELAY:</span> CONNECTED
           </span>
         );
       case 'Pending Synchronization':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-medium">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#00f0ff]" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#38BDF8]/10 border border-[#38BDF8]/30 text-[#38BDF8] text-xs font-mono font-medium">
+            <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-pulse shadow-[0_0_6px_#38BDF8]" />
             <span>PENDING SYNC ({syncStatus.pendingCount || syncQueue.length})</span>
           </span>
         );
       case 'Offline':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 border border-slate-600 text-slate-300 text-xs font-mono font-medium">
-            <WifiOff className="w-3.5 h-3.5 text-slate-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1B293B] border border-[#263449] text-[#94A3B8] text-xs font-mono font-medium">
+            <WifiOff className="w-3.5 h-3.5 text-[#94A3B8]" />
             <span>OFFLINE BUFFER</span>
           </span>
         );
       case 'Synchronization Error':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-500/10 border border-rose-500/40 text-rose-400 text-xs font-mono font-medium">
-            <AlertTriangle className="w-3.5 h-3.5 text-rose-400 animate-bounce" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#F87171]/10 border border-[#F87171]/40 text-[#F87171] text-xs font-mono font-medium">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#F87171] animate-bounce" />
             <span>SYNC ERROR</span>
           </span>
         );
@@ -63,45 +63,45 @@ export const SyncStatusWidget = () => {
       {isOpen && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-80 bg-midnight-900 border border-midnight-700/80 rounded-xl shadow-2xl p-4 z-40 text-xs font-mono animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-midnight-750">
-              <span className="font-bold text-white uppercase flex items-center gap-2">
-                <Server className="w-4 h-4 text-cyan-400" />
+          <div className="absolute right-0 mt-2 w-80 bg-[#141F30] border border-[#263449] rounded-xl shadow-2xl p-4 z-40 text-xs font-mono animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-[#263449]">
+              <span className="font-bold text-[#F8FAFC] uppercase flex items-center gap-2">
+                <Server className="w-4 h-4 text-[#55E6C1]" />
                 Cluster Synchronization
               </span>
               <Badge variant="cyan" size="sm">Prototype Store</Badge>
             </div>
 
-            <div className="mt-3 space-y-2 text-slate-300 text-[11px]">
-              <div className="flex items-center justify-between py-1 border-b border-midnight-800">
-                <span className="text-slate-400">Current State:</span>
-                <span className="font-bold text-white">{syncStatus.state}</span>
+            <div className="mt-3 space-y-2 text-[#94A3B8] text-[11px]">
+              <div className="flex items-center justify-between py-1 border-b border-[#263449]/70">
+                <span>Current State:</span>
+                <span className="font-bold text-[#F8FAFC]">{syncStatus.state}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-midnight-800">
-                <span className="text-slate-400">Last Successful Sync:</span>
-                <span className="text-white">{formatLastSync(syncStatus.lastSyncedAt)}</span>
+              <div className="flex items-center justify-between py-1 border-b border-[#263449]/70">
+                <span>Last Successful Sync:</span>
+                <span className="text-[#F8FAFC]">{formatLastSync(syncStatus.lastSyncedAt)}</span>
               </div>
-              <div className="flex items-center justify-between py-1 border-b border-midnight-800">
-                <span className="text-slate-400">Queued Offline Events:</span>
-                <span className="font-bold text-cyan-400">{syncQueue.length} events</span>
+              <div className="flex items-center justify-between py-1 border-b border-[#263449]/70">
+                <span>Queued Offline Events:</span>
+                <span className="font-bold text-[#55E6C1]">{syncQueue.length} events</span>
               </div>
               <div className="flex items-center justify-between py-1">
-                <span className="text-slate-400">Backend API Target:</span>
-                <span className="text-slate-400 font-mono text-[10px] truncate max-w-[140px]" title={import.meta.env.VITE_API_BASE_URL || 'Local Antigravity Bridge'}>
+                <span>Backend API Target:</span>
+                <span className="text-[#94A3B8] font-mono text-[10px] truncate max-w-[140px]" title={import.meta.env.VITE_API_BASE_URL || 'Local Antigravity Bridge'}>
                   {import.meta.env.VITE_API_BASE_URL || 'FastAPI Mock Engine'}
                 </span>
               </div>
             </div>
 
             {syncStatus.lastSyncError && (
-              <div className="mt-2.5 p-2 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px]">
+              <div className="mt-2.5 p-2 rounded bg-[#F87171]/10 border border-[#F87171]/30 text-[#F87171] text-[10px]">
                 {syncStatus.lastSyncError}
               </div>
             )}
 
             {/* Simulated Connectivity Switcher */}
-            <div className="mt-3 pt-3 border-t border-midnight-750">
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1.5 font-bold">
+            <div className="mt-3 pt-3 border-t border-[#263449]">
+              <div className="text-[10px] text-[#94A3B8] uppercase tracking-wider mb-1.5 font-bold">
                 Simulate Connection State:
               </div>
               <div className="grid grid-cols-2 gap-1.5">
@@ -109,8 +109,8 @@ export const SyncStatusWidget = () => {
                   onClick={() => setConnectivityState('Connected')}
                   className={`px-2 py-1 rounded text-[10px] border transition-colors ${
                     syncStatus.state === 'Connected' 
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' 
-                      : 'bg-midnight-800 text-slate-400 border-midnight-700 hover:text-white'
+                      ? 'bg-[#55E6C1]/20 text-[#55E6C1] border-[#55E6C1]/40' 
+                      : 'bg-[#1B293B] text-[#94A3B8] border-[#263449] hover:text-[#F8FAFC]'
                   }`}
                 >
                   Force Online
@@ -119,8 +119,8 @@ export const SyncStatusWidget = () => {
                   onClick={() => setConnectivityState('Offline')}
                   className={`px-2 py-1 rounded text-[10px] border transition-colors ${
                     syncStatus.state === 'Offline' 
-                      ? 'bg-slate-700 text-white border-slate-500' 
-                      : 'bg-midnight-800 text-slate-400 border-midnight-700 hover:text-white'
+                      ? 'bg-[#1B293B] text-[#F8FAFC] border-[#94A3B8]' 
+                      : 'bg-[#1B293B] text-[#94A3B8] border-[#263449] hover:text-[#F8FAFC]'
                   }`}
                 >
                   Force Offline
@@ -129,8 +129,8 @@ export const SyncStatusWidget = () => {
                   onClick={() => setConnectivityState('Pending Synchronization')}
                   className={`px-2 py-1 rounded text-[10px] border transition-colors ${
                     syncStatus.state === 'Pending Synchronization' 
-                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' 
-                      : 'bg-midnight-800 text-slate-400 border-midnight-700 hover:text-white'
+                      ? 'bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/40' 
+                      : 'bg-[#1B293B] text-[#94A3B8] border-[#263449] hover:text-[#F8FAFC]'
                   }`}
                 >
                   Pending Sync
@@ -139,8 +139,8 @@ export const SyncStatusWidget = () => {
                   onClick={() => setConnectivityState('Synchronization Error')}
                   className={`px-2 py-1 rounded text-[10px] border transition-colors ${
                     syncStatus.state === 'Synchronization Error' 
-                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' 
-                      : 'bg-midnight-800 text-slate-400 border-midnight-700 hover:text-white'
+                      ? 'bg-[#F87171]/20 text-[#F87171] border-[#F87171]/40' 
+                      : 'bg-[#1B293B] text-[#94A3B8] border-[#263449] hover:text-[#F8FAFC]'
                   }`}
                 >
                   Simulate Error

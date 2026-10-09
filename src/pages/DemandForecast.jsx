@@ -187,23 +187,23 @@ export const DemandForecast = () => {
               <defs>
                 {/* Confidence band gradient */}
                 <linearGradient id="uncertaintyGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.25}/>
-                  <stop offset="95%" stopColor="#00f0ff" stopOpacity={0.02}/>
+                  <stop offset="5%" stopColor="#55E6C1" stopOpacity={0.25}/>
+                  <stop offset="95%" stopColor="#55E6C1" stopOpacity={0.02}/>
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.6} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#263449" opacity={0.6} />
               
               <XAxis 
                 dataKey="date" 
-                stroke="#64748b" 
+                stroke="#94A3B8" 
                 fontSize={11} 
                 fontFamily="monospace"
                 tickLine={false}
               />
               
               <YAxis 
-                stroke="#64748b" 
+                stroke="#94A3B8" 
                 fontSize={11} 
                 fontFamily="monospace"
                 tickLine={false}
@@ -212,14 +212,15 @@ export const DemandForecast = () => {
 
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#090e1a',
-                  borderColor: '#334155',
+                  backgroundColor: '#0B1220',
+                  borderColor: '#263449',
                   borderRadius: '8px',
                   fontSize: '12px',
                   fontFamily: 'monospace',
+                  color: '#F8FAFC',
                   boxShadow: '0 10px 25px -5px rgba(0,0,0,0.6)'
                 }}
-                labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
+                labelStyle={{ color: '#94A3B8', fontWeight: 'bold' }}
                 formatter={(val, name) => {
                   if (val === null) return ['—', name];
                   const labelMap = {
@@ -242,12 +243,12 @@ export const DemandForecast = () => {
               {/* Safety stock baseline */}
               <ReferenceLine 
                 y={chartData[0]?.safetyThreshold || 18000} 
-                stroke="#f59e0b" 
+                stroke="#FBBF24" 
                 strokeDasharray="4 4" 
                 label={{ 
                   value: `Safety Buffer (${chartData[0]?.safetyThreshold?.toLocaleString()} ${forecastState?.unit})`, 
                   position: 'insideTopRight', 
-                  fill: '#f59e0b', 
+                  fill: '#FBBF24', 
                   fontSize: 10, 
                   fontFamily: 'monospace' 
                 }} 
@@ -266,7 +267,7 @@ export const DemandForecast = () => {
               <Line
                 type="monotone"
                 dataKey="currentStockLevel"
-                stroke="#06b6d4"
+                stroke="#38BDF8"
                 strokeWidth={2.5}
                 dot={false}
                 name="currentStockLevel"
@@ -276,9 +277,9 @@ export const DemandForecast = () => {
               <Line
                 type="monotone"
                 dataKey="historical"
-                stroke="#94a3b8"
+                stroke="#94A3B8"
                 strokeWidth={2}
-                dot={{ fill: '#94a3b8', r: 3 }}
+                dot={{ fill: '#94A3B8', r: 3 }}
                 name="historical"
               />
 
@@ -286,10 +287,10 @@ export const DemandForecast = () => {
               <Line
                 type="monotone"
                 dataKey="projected"
-                stroke="#00f0ff"
+                stroke="#55E6C1"
                 strokeWidth={3}
                 strokeDasharray="5 3"
-                dot={{ fill: '#00f0ff', r: 3.5 }}
+                dot={{ fill: '#55E6C1', r: 3.5 }}
                 name="projected"
               />
             </ComposedChart>

@@ -8,28 +8,78 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Theme surfaces
         midnight: {
-          950: '#060a12',
-          900: '#0b1120',
-          850: '#0f172a',
-          800: '#141e33',
-          750: '#1a2642',
-          700: '#243356',
-          600: '#334774',
+          950: '#0B1220', // Main background
+          900: '#141F30', // Card and panel surfaces
+          850: '#1B293B', // Secondary surfaces
+          800: '#202E42', // Interactive hover surface
+          750: '#263449', // Subtle slate border tone
+          700: '#263449', // Harmonized border tone
+          600: '#33435C',
         },
+        // Slate typography and subtle neutral borders
+        slate: {
+          50: '#FFFFFF',
+          100: '#F8FAFC', // Primary text
+          200: '#F1F5F9',
+          300: '#CBD5E1',
+          400: '#94A3B8', // Secondary text
+          500: '#64748B',
+          600: '#475569',
+          700: '#263449', // Subtle border
+          800: '#1B293B', // Secondary surface
+          900: '#141F30', // Card surface
+          950: '#0B1220', // Background
+        },
+        // Accents
+        accent: {
+          primary: '#55E6C1',   // Futuristic electric mint/cyan
+          secondary: '#38BDF8', // Tactical sky blue
+          warning: '#FBBF24',   // Warning amber
+          alert: '#F87171',     // Critical alert soft crimson
+          border: '#263449',    // Slate border
+        },
+        // Aliases to seamlessly adapt existing classes
         cyan: {
-          glow: '#00f0ff',
-          dim: 'rgba(0, 240, 255, 0.12)',
-          accent: '#06b6d4',
-          subtle: '#0891b2',
+          50: '#E6FAF5',
+          100: '#C7F5EC',
+          200: '#9CECDD',
+          300: '#6EE2CC',
+          400: '#55E6C1', // Primary accent
+          500: '#55E6C1',
+          600: '#2DD4BF',
+          glow: '#55E6C1',
+          dim: 'rgba(85, 230, 193, 0.12)',
+          accent: '#55E6C1',
+          subtle: '#38BDF8',
+        },
+        sky: {
+          400: '#38BDF8',
+          500: '#38BDF8',
+        },
+        rose: {
+          400: '#F87171',
+          500: '#F87171',
+          600: '#EF4444',
+        },
+        amber: {
+          400: '#FBBF24',
+          500: '#FBBF24',
+          600: '#F59E0B',
+        },
+        emerald: {
+          400: '#55E6C1',
+          500: '#55E6C1',
+          600: '#2DD4BF',
         },
         hazard: {
-          amber: '#f59e0b',
-          amberGlow: 'rgba(245, 158, 11, 0.15)',
-          red: '#f43f5e',
-          redGlow: 'rgba(244, 63, 94, 0.18)',
-          emerald: '#10b981',
-          emeraldGlow: 'rgba(16, 185, 129, 0.15)',
+          amber: '#FBBF24',
+          amberGlow: 'rgba(251, 191, 36, 0.15)',
+          red: '#F87171',
+          redGlow: 'rgba(248, 113, 113, 0.18)',
+          emerald: '#55E6C1',
+          emeraldGlow: 'rgba(85, 230, 193, 0.15)',
         }
       },
       fontFamily: {
@@ -37,14 +87,14 @@ export default {
         sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
-        'cyan-glow': '0 0 20px -3px rgba(0, 240, 255, 0.25)',
-        'cyan-sm': '0 0 10px -2px rgba(0, 240, 255, 0.3)',
-        'red-glow': '0 0 20px -3px rgba(244, 63, 94, 0.3)',
-        'amber-glow': '0 0 20px -3px rgba(245, 158, 11, 0.25)',
-        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.5)',
+        'cyan-glow': '0 0 16px -2px rgba(85, 230, 193, 0.25)',
+        'cyan-sm': '0 0 8px -2px rgba(85, 230, 193, 0.3)',
+        'red-glow': '0 0 16px -2px rgba(248, 113, 113, 0.25)',
+        'amber-glow': '0 0 16px -2px rgba(251, 191, 36, 0.22)',
+        'card': '0 4px 16px -2px rgba(5, 10, 20, 0.6)',
       },
       backgroundImage: {
-        'grid-pattern': "radial-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px)",
+        'grid-pattern': "radial-gradient(rgba(85, 230, 193, 0.06) 1px, transparent 1px)",
       }
     },
   },

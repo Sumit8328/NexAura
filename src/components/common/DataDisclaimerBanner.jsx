@@ -11,28 +11,28 @@ export const DataDisclaimerBanner = ({
       icon: Cpu,
       title: 'LOCAL PROTOTYPE DATASET ACTIVE',
       desc: 'Displaying high-fidelity illustrative logistics telemetry. Backend decoupled for standalone evaluation; API contract prepared for Python FastAPI & Antigravity integration.',
-      border: 'border-cyan-500/30',
-      bg: 'bg-cyan-950/20',
-      text: 'text-cyan-300',
-      iconColor: 'text-cyan-400'
+      border: 'border-[#55E6C1]/30',
+      bg: 'bg-[#141F30]/80',
+      text: 'text-[#55E6C1]',
+      iconColor: 'text-[#55E6C1]'
     },
     simulation: {
       icon: AlertCircle,
       title: 'CLIENT-SIDE ILLUSTRATIVE SIMULATION',
       desc: 'Heuristic scenario model executing locally. Calculations represent synthetic operational estimates rather than live neural network weights or physical GPS telemetry.',
-      border: 'border-amber-500/30',
-      bg: 'bg-amber-950/20',
-      text: 'text-amber-300',
-      iconColor: 'text-amber-400'
+      border: 'border-[#38BDF8]/30',
+      bg: 'bg-[#141F30]/80',
+      text: 'text-[#38BDF8]',
+      iconColor: 'text-[#38BDF8]'
     },
     offline: {
       icon: WifiOff,
       title: 'OFFLINE BUFFER ENGAGED',
       desc: 'Transactions queued locally in client storage. Events will stage for reconciliation upon backend connectivity resumption.',
-      border: 'border-rose-500/30',
-      bg: 'bg-rose-950/20',
-      text: 'text-rose-300',
-      iconColor: 'text-rose-400'
+      border: 'border-[#F87171]/30',
+      bg: 'bg-[#141F30]/80',
+      text: 'text-[#F87171]',
+      iconColor: 'text-[#F87171]'
     }
   };
 

@@ -23,12 +23,12 @@ export const Button = ({
   };
 
   const variantClasses = {
-    primary: 'bg-cyan-500 hover:bg-cyan-400 text-midnight-950 font-semibold shadow-[0_0_15px_-3px_rgba(0,240,255,0.4)] hover:shadow-[0_0_20px_0px_rgba(0,240,255,0.6)] focus:ring-cyan-400 border border-cyan-400',
-    secondary: 'bg-midnight-800 hover:bg-midnight-750 text-slate-200 border border-midnight-700 hover:border-slate-500 focus:ring-slate-500',
-    outline: 'bg-transparent hover:bg-cyan-950/30 text-cyan-400 border border-cyan-500/50 hover:border-cyan-400 focus:ring-cyan-400',
-    danger: 'bg-rose-600 hover:bg-rose-500 text-white font-semibold shadow-[0_0_15px_-3px_rgba(244,63,94,0.4)] focus:ring-rose-400 border border-rose-500',
-    warning: 'bg-amber-500 hover:bg-amber-400 text-midnight-950 font-semibold shadow-[0_0_15px_-3px_rgba(245,158,11,0.4)] focus:ring-amber-400 border border-amber-400',
-    ghost: 'bg-transparent hover:bg-slate-800/60 text-slate-300 hover:text-white border border-transparent focus:ring-slate-500'
+    primary: 'bg-[#55E6C1] hover:bg-[#7EECD0] text-[#0B1220] font-semibold shadow-[0_0_12px_-2px_rgba(85,230,193,0.35)] hover:shadow-[0_0_16px_0px_rgba(85,230,193,0.5)] focus:ring-[#55E6C1] border border-[#55E6C1]',
+    secondary: 'bg-[#1B293B] hover:bg-[#202E42] text-[#F8FAFC] border border-[#263449] hover:border-[#38BDF8]/50 focus:ring-[#38BDF8]',
+    outline: 'bg-transparent hover:bg-[#55E6C1]/10 text-[#55E6C1] border border-[#55E6C1]/50 hover:border-[#55E6C1] focus:ring-[#55E6C1]',
+    danger: 'bg-[#F87171] hover:bg-[#EF4444] text-[#0B1220] font-semibold shadow-[0_0_12px_-2px_rgba(248,113,113,0.35)] focus:ring-[#F87171] border border-[#F87171]',
+    warning: 'bg-[#FBBF24] hover:bg-[#F59E0B] text-[#0B1220] font-semibold shadow-[0_0_12px_-2px_rgba(251,191,36,0.35)] focus:ring-[#FBBF24] border border-[#FBBF24]',
+    ghost: 'bg-transparent hover:bg-[#1B293B]/70 text-[#94A3B8] hover:text-[#F8FAFC] border border-transparent focus:ring-[#263449]'
   };
 
   return (

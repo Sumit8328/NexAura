@@ -18,14 +18,14 @@ export const CompactMap = ({ routes = [], locations = [] }) => {
   };
 
   return (
-    <div className="relative w-full h-[220px] bg-midnight-950 rounded-lg overflow-hidden border border-midnight-700/70 group">
+    <div className="relative w-full h-[220px] bg-[#0B1220] rounded-lg overflow-hidden border border-[#263449] group">
       {/* Ambient Grid */}
       <div 
         className="absolute inset-0 opacity-15 pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(0, 240, 255, 0.15) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(0, 240, 255, 0.15) 1px, transparent 1px)
+            linear-gradient(to right, rgba(85, 230, 193, 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(85, 230, 193, 0.15) 1px, transparent 1px)
           `,
           backgroundSize: '24px 24px'
         }}
@@ -39,7 +39,7 @@ export const CompactMap = ({ routes = [], locations = [] }) => {
             return idx === 0 ? `M ${curr.x} ${curr.y}` : `${acc} L ${curr.x} ${curr.y}`;
           }, '');
 
-          const strokeColor = r.status === 'Available' ? '#00f0ff' : r.status === 'Disrupted' ? '#f59e0b' : '#f43f5e';
+          const strokeColor = r.status === 'Available' ? '#55E6C1' : r.status === 'Disrupted' ? '#FBBF24' : '#F87171';
 
           return (
             <path
@@ -48,7 +48,7 @@ export const CompactMap = ({ routes = [], locations = [] }) => {
               fill="none"
               stroke={strokeColor}
               strokeWidth="2"
-              strokeOpacity="0.75"
+              strokeOpacity="0.85"
               strokeDasharray={r.status === 'Available' ? 'none' : '4 3'}
             />
           );
@@ -61,9 +61,9 @@ export const CompactMap = ({ routes = [], locations = [] }) => {
 
           return (
             <g key={loc.id} transform={`translate(${x}, ${y})`}>
-              <circle r={isMain ? 6 : 4} fill="#0b1120" stroke="#00f0ff" strokeWidth="2" />
-              <circle r={isMain ? 3 : 2} fill="#00f0ff" />
-              <text x="8" y="3" fill="#cbd5e1" fontSize="8" fontFamily="monospace" fontWeight="bold">
+              <circle r={isMain ? 6 : 4} fill="#0B1220" stroke="#55E6C1" strokeWidth="2" />
+              <circle r={isMain ? 3 : 2} fill="#55E6C1" />
+              <text x="8" y="3" fill="#94A3B8" fontSize="8" fontFamily="monospace" fontWeight="bold">
                 {loc.code}
               </text>
             </g>
@@ -72,13 +72,13 @@ export const CompactMap = ({ routes = [], locations = [] }) => {
       </svg>
 
       {/* Overlay action bar */}
-      <div className="absolute inset-0 bg-midnight-950/20 group-hover:bg-midnight-950/40 transition-colors flex items-end justify-between p-3 pointer-events-none">
-        <span className="text-[10px] font-mono text-slate-400 bg-midnight-900/90 px-2 py-0.5 rounded border border-midnight-700">
+      <div className="absolute inset-0 bg-[#0B1220]/20 group-hover:bg-[#0B1220]/40 transition-colors flex items-end justify-between p-3 pointer-events-none">
+        <span className="text-[10px] font-mono text-[#94A3B8] bg-[#141F30] px-2 py-0.5 rounded border border-[#263449]">
           5 Monitored Corridors
         </span>
         <button
           onClick={() => navigate('/routes')}
-          className="pointer-events-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-midnight-900/90 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 text-xs font-mono transition-colors shadow-sm"
+          className="pointer-events-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#141F30] text-[#55E6C1] hover:text-[#F8FAFC] border border-[#55E6C1]/40 hover:border-[#55E6C1] text-xs font-mono transition-colors shadow-sm"
         >
           <Navigation className="w-3 h-3" />
           <span>Launch Route Map</span>

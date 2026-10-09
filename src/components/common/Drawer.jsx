@@ -30,24 +30,24 @@ export const Drawer = ({
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div 
-        className="fixed inset-0 bg-midnight-950/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-[#0B1220]/85 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
-        <div className={`w-screen ${width} bg-midnight-900 border-l border-midnight-700/80 shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200`}>
+        <div className={`w-screen ${width} bg-[#141F30] border-l border-[#263449] shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200`}>
           {/* Header */}
-          <div className="px-6 py-5 border-b border-midnight-750 bg-midnight-850/60 flex items-center justify-between">
+          <div className="px-6 py-5 border-b border-[#263449] bg-[#1B293B]/70 flex items-center justify-between">
             <div className="min-w-0 pr-4">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-slate-100 truncate">{title}</h3>
+                <h3 className="text-base font-semibold text-[#F8FAFC] truncate">{title}</h3>
                 {badge}
               </div>
-              {subtitle && <p className="text-xs text-slate-400 font-mono mt-1 truncate">{subtitle}</p>}
+              {subtitle && <p className="text-xs text-[#94A3B8] font-mono mt-1 truncate">{subtitle}</p>}
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors shrink-0"
+              className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] rounded-lg hover:bg-[#1B293B] transition-colors shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -60,7 +60,7 @@ export const Drawer = ({
 
           {/* Footer */}
           {footer && (
-            <div className="px-6 py-4 border-t border-midnight-750 bg-midnight-850/50 flex items-center justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[#263449] bg-[#1B293B]/50 flex items-center justify-end gap-3">
               {footer}
             </div>
           )}

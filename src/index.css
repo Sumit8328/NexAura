@@ -5,42 +5,48 @@
 @layer base {
   * {
     box-sizing: border-box;
-    border-color: #1e293b;
+    border-color: #263449;
   }
   
   html {
     color-scheme: dark;
+    background-color: #0B1220;
   }
 
   body {
-    background-color: #060a12;
-    color: #f1f5f9;
+    background-color: #0B1220;
+    color: #F8FAFC;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
-  /* Custom dark tactical scrollbars */
+  /* Custom dark tactical command-centre scrollbars */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #090e1a;
+    background: #0B1220;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1e293b;
+    background: #263449;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #00f0ff;
+    background: #55E6C1;
+  }
+
+  ::selection {
+    background: #55E6C1;
+    color: #0B1220;
   }
 }
 
-/* Subtle tactical animations */
-@keyframes radarSweep {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Restrained tactical micro-animations */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
-.radar-sweep {
-  animation: radarSweep 8s linear infinite;
+.pulse-subtle {
+  animation: pulseSubtle 3s ease-in-out infinite;
 }

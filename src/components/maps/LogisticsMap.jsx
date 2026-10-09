@@ -37,31 +37,31 @@ export const LogisticsMap = ({
   const selectedRoute = routes.find(r => r.id === selectedRouteId);
 
   return (
-    <div className="relative w-full rounded-xl overflow-hidden border border-midnight-700/80 bg-midnight-950 shadow-2xl flex flex-col" style={{ minHeight: height }}>
+    <div className="relative w-full rounded-xl overflow-hidden border border-[#263449] bg-[#0B1220] shadow-2xl flex flex-col" style={{ minHeight: height }}>
       {/* Tactical Top Bar */}
-      <div className="px-4 py-3 bg-midnight-900/90 border-b border-midnight-700/80 flex flex-wrap items-center justify-between gap-3 z-10 backdrop-blur-md">
+      <div className="px-4 py-3 bg-[#141F30]/90 border-b border-[#263449] flex flex-wrap items-center justify-between gap-3 z-10 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
-            <span className="text-xs font-mono font-bold text-slate-100 tracking-wider uppercase">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#55E6C1] animate-pulse shadow-[0_0_8px_#55E6C1]" />
+            <span className="text-xs font-mono font-bold text-[#F8FAFC] tracking-wider uppercase">
               Tactical Theater Grid // Sector-Southwest Command
             </span>
           </div>
-          <span className="text-[11px] font-mono text-cyan-400/80 px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-800/40">
+          <span className="text-[11px] font-mono text-[#55E6C1] px-2 py-0.5 rounded bg-[#1B293B] border border-[#263449]">
             Fictional Staging Bounds
           </span>
         </div>
 
         {/* Filter buttons */}
-        <div className="flex items-center gap-1.5 bg-midnight-950/80 p-1 rounded-lg border border-midnight-800 text-xs font-mono">
+        <div className="flex items-center gap-1.5 bg-[#0B1220] p-1 rounded-lg border border-[#263449] text-xs font-mono">
           {['all', 'available', 'disrupted', 'closed'].map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={`px-2.5 py-1 rounded text-xs transition-colors capitalize ${
                 activeFilter === filter
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-semibold'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#55E6C1]/20 text-[#55E6C1] border border-[#55E6C1]/40 font-semibold'
+                  : 'text-[#94A3B8] hover:text-[#F8FAFC]'
               }`}
             >
               {filter}
@@ -71,21 +71,21 @@ export const LogisticsMap = ({
       </div>
 
       {/* Main Interactive Tactical Map Canvas */}
-      <div className="relative flex-1 w-full bg-[#070c18] overflow-hidden select-none" style={{ minHeight: '400px' }}>
+      <div className="relative flex-1 w-full bg-[#0B1220] overflow-hidden select-none" style={{ minHeight: '400px' }}>
         {/* Ambient Grid Background */}
         <div 
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(0, 240, 255, 0.15) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(0, 240, 255, 0.15) 1px, transparent 1px)
+              linear-gradient(to right, rgba(85, 230, 193, 0.15) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(85, 230, 193, 0.15) 1px, transparent 1px)
             `,
             backgroundSize: '40px 40px'
           }}
         />
 
         {/* Secondary diagonal radar sweeps */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.05)_0,transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(85,230,193,0.05)_0,transparent_70%)] pointer-events-none" />
 
         <svg 
           viewBox="0 0 900 500" 
@@ -118,14 +118,14 @@ export const LogisticsMap = ({
           </defs>
 
           {/* Range rings centered around Zenith Central Hub */}
-          <circle cx="780" cy="220" r="140" fill="none" stroke="rgba(0, 240, 255, 0.08)" strokeDasharray="4 4" />
-          <circle cx="780" cy="220" r="280" fill="none" stroke="rgba(0, 240, 255, 0.06)" strokeDasharray="6 6" />
-          <circle cx="780" cy="220" r="420" fill="none" stroke="rgba(0, 240, 255, 0.04)" strokeDasharray="8 8" />
+          <circle cx="780" cy="220" r="140" fill="none" stroke="rgba(85, 230, 193, 0.08)" strokeDasharray="4 4" />
+          <circle cx="780" cy="220" r="280" fill="none" stroke="rgba(85, 230, 193, 0.06)" strokeDasharray="6 6" />
+          <circle cx="780" cy="220" r="420" fill="none" stroke="rgba(85, 230, 193, 0.04)" strokeDasharray="8 8" />
 
           {/* Coordinate Marks */}
-          <text x="75" y="30" fill="#475569" fontSize="10" fontFamily="monospace">GRID SECTOR 34°N / 118°W</text>
-          <text x="700" y="30" fill="#475569" fontSize="10" fontFamily="monospace">ZENITH HUB SECTOR 39°N / 105°W</text>
-          <text x="75" y="480" fill="#475569" fontSize="10" fontFamily="monospace">HELIOS COASTAL 32°N / 117°W</text>
+          <text x="75" y="30" fill="#94A3B8" fontSize="10" fontFamily="monospace">GRID SECTOR 34°N / 118°W</text>
+          <text x="700" y="30" fill="#94A3B8" fontSize="10" fontFamily="monospace">ZENITH HUB SECTOR 39°N / 105°W</text>
+          <text x="75" y="480" fill="#94A3B8" fontSize="10" fontFamily="monospace">HELIOS COASTAL 32°N / 117°W</text>
 
           {/* Draw Route Paths */}
           {filteredRoutes.map((route) => {
@@ -135,16 +135,16 @@ export const LogisticsMap = ({
               return idx === 0 ? `M ${curr.x} ${curr.y}` : `${acc} L ${curr.x} ${curr.y}`;
             }, '');
 
-            let strokeColor = '#00f0ff';
+            let strokeColor = '#55E6C1';
             let strokeDash = 'none';
             let filterId = 'cyanGlow';
 
             if (route.status === 'Disrupted') {
-              strokeColor = '#f59e0b';
+              strokeColor = '#FBBF24';
               strokeDash = '6 4';
               filterId = 'amberGlow';
             } else if (route.status === 'Closed') {
-              strokeColor = '#f43f5e';
+              strokeColor = '#F87171';
               strokeDash = '4 4';
               filterId = 'redGlow';
             }
@@ -178,7 +178,7 @@ export const LogisticsMap = ({
 
                 {/* Animated traveling particle on active/available routes */}
                 {route.status === 'Available' && (
-                  <circle r="4" fill="#ffffff" filter="url(#cyanGlow)">
+                  <circle r="4" fill="#FFFFFF" filter="url(#cyanGlow)">
                     <animateMotion
                       path={pathData}
                       dur={`${Math.max(4, route.transitHours * 0.8)}s`}
@@ -196,7 +196,7 @@ export const LogisticsMap = ({
                       width="110" 
                       height="20" 
                       rx="4" 
-                      fill="#0b1120" 
+                      fill="#0B1220" 
                       stroke={strokeColor} 
                       strokeWidth="1" 
                       opacity="0.88"
@@ -235,7 +235,7 @@ export const LogisticsMap = ({
                 <circle 
                   r={isHub ? 16 : 11} 
                   fill="none" 
-                  stroke={isHazard ? '#f59e0b' : '#00f0ff'} 
+                  stroke={isHazard ? '#FBBF24' : '#55E6C1'} 
                   strokeWidth="1.5"
                   opacity="0.5"
                   className="animate-ping"
@@ -245,15 +245,15 @@ export const LogisticsMap = ({
                 {/* Outer ring */}
                 <circle 
                   r={isHub ? 10 : 7} 
-                  fill="#0b1120" 
-                  stroke={isHazard ? '#f59e0b' : '#00f0ff'} 
+                  fill="#0B1220" 
+                  stroke={isHazard ? '#FBBF24' : '#55E6C1'} 
                   strokeWidth="2" 
                 />
 
                 {/* Center dot */}
                 <circle 
                   r={isHub ? 5 : 3.5} 
-                  fill={isHazard ? '#f59e0b' : '#00f0ff'} 
+                  fill={isHazard ? '#FBBF24' : '#55E6C1'} 
                 />
 
                 {/* Location Tag */}
@@ -295,24 +295,24 @@ export const LogisticsMap = ({
         </svg>
 
         {/* Map Controls Floating Overlay */}
-        <div className="absolute bottom-4 right-4 flex flex-col gap-1.5 bg-midnight-900/90 p-1.5 rounded-lg border border-midnight-700 backdrop-blur-md shadow-xl z-20">
+        <div className="absolute bottom-4 right-4 flex flex-col gap-1.5 bg-[#141F30]/90 p-1.5 rounded-lg border border-[#263449] backdrop-blur-md shadow-xl z-20">
           <button 
             onClick={() => setZoomLevel(prev => Math.min(2.0, prev + 0.25))}
-            className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition-colors"
+            className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1B293B] rounded transition-colors"
             title="Zoom In"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
           <button 
             onClick={() => setZoomLevel(prev => Math.max(0.75, prev - 0.25))}
-            className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition-colors"
+            className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1B293B] rounded transition-colors"
             title="Zoom Out"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
           <button 
             onClick={() => setZoomLevel(1)}
-            className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition-colors text-[10px] font-mono text-center"
+            className="p-1.5 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1B293B] rounded transition-colors text-[10px] font-mono text-center"
             title="Reset Zoom"
           >
             1x
@@ -320,27 +320,27 @@ export const LogisticsMap = ({
         </div>
 
         {/* Map Legend */}
-        <div className="absolute bottom-4 left-4 bg-midnight-900/90 p-3 rounded-lg border border-midnight-700/80 backdrop-blur-md text-xs font-mono z-20 space-y-1.5 max-w-xs shadow-xl hidden sm:block">
-          <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Corridor Status</div>
+        <div className="absolute bottom-4 left-4 bg-[#141F30]/90 p-3 rounded-lg border border-[#263449] backdrop-blur-md text-xs font-mono z-20 space-y-1.5 max-w-xs shadow-xl hidden sm:block">
+          <div className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Corridor Status</div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-1 bg-cyan-400 rounded-full shadow-[0_0_6px_#00f0ff]" />
-            <span className="text-slate-200 text-[11px]">Available / Clear</span>
+            <span className="w-4 h-1 bg-[#55E6C1] rounded-full shadow-[0_0_6px_#55E6C1]" />
+            <span className="text-[#F8FAFC] text-[11px]">Available / Clear</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-1 bg-amber-400 rounded-full border-dashed" />
-            <span className="text-slate-200 text-[11px]">Disrupted (Hazard/Delay)</span>
+            <span className="w-4 h-1 bg-[#FBBF24] rounded-full border-dashed" />
+            <span className="text-[#94A3B8] text-[11px]">Disrupted (Hazard/Delay)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-1 bg-rose-500 rounded-full" />
-            <span className="text-slate-200 text-[11px]">Closed / Blocked</span>
+            <span className="w-4 h-1 bg-[#F87171] rounded-full" />
+            <span className="text-[#94A3B8] text-[11px]">Closed / Blocked</span>
           </div>
         </div>
 
         {/* Selected Route Preview Pill */}
         {selectedRoute && (
-          <div className="absolute top-4 left-4 bg-midnight-900/95 p-3 rounded-lg border border-cyan-500/50 backdrop-blur-md text-xs font-mono z-20 max-w-sm shadow-cyan-sm animate-in fade-in duration-150">
+          <div className="absolute top-4 left-4 bg-[#141F30]/95 p-3 rounded-lg border border-[#55E6C1]/50 backdrop-blur-md text-xs font-mono z-20 max-w-sm shadow-[0_0_15px_rgba(85,230,193,0.2)] animate-in fade-in duration-150">
             <div className="flex items-center justify-between gap-3">
-              <span className="font-bold text-white text-sm">{selectedRoute.name}</span>
+              <span className="font-bold text-[#F8FAFC] text-sm">{selectedRoute.name}</span>
               <Badge 
                 variant={selectedRoute.status === 'Available' ? 'cyan' : selectedRoute.status === 'Disrupted' ? 'amber' : 'red'}
                 size="sm"
@@ -348,19 +348,19 @@ export const LogisticsMap = ({
                 {selectedRoute.status}
               </Badge>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-midnight-800 text-[11px] text-slate-300">
-              <div>Transit: <span className="text-white font-bold">{selectedRoute.transitHours} hrs</span></div>
-              <div>Capacity: <span className="text-white font-bold">{selectedRoute.transportCapacity}</span></div>
-              <div className="col-span-2 text-slate-400 text-[10px] mt-1">{selectedRoute.hazardDetails}</div>
+            <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-[#263449] text-[11px] text-[#94A3B8]">
+              <div>Transit: <span className="text-[#F8FAFC] font-bold">{selectedRoute.transitHours} hrs</span></div>
+              <div>Capacity: <span className="text-[#F8FAFC] font-bold">{selectedRoute.transportCapacity}</span></div>
+              <div className="col-span-2 text-[#94A3B8] text-[10px] mt-1">{selectedRoute.hazardDetails}</div>
             </div>
           </div>
         )}
       </div>
 
       {/* Footer Disclaimer */}
-      <div className="px-4 py-2 bg-midnight-900/80 border-t border-midnight-800 text-[11px] font-mono text-slate-400 flex items-center justify-between">
+      <div className="px-4 py-2 bg-[#141F30]/80 border-t border-[#263449] text-[11px] font-mono text-[#94A3B8] flex items-center justify-between">
         <span>* Illustrative operational coordinates for tactical simulation. Not real-world civilian GPS vectors.</span>
-        <span className="text-cyan-400/80">Vector GIS Engine 2.1</span>
+        <span className="text-[#55E6C1]">Vector GIS Engine 2.1</span>
       </div>
     </div>
   );

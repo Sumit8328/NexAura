@@ -463,16 +463,16 @@ export const ScenarioLab = () => {
             <div className="h-64 w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonChartData} margin={{ top: 10, right: 15, left: 0, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.6} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#263449" opacity={0.6} />
                   <XAxis 
                     dataKey="name" 
-                    stroke="#64748b" 
+                    stroke="#94A3B8" 
                     fontSize={11} 
                     fontFamily="monospace"
                     tickLine={false}
                   />
                   <YAxis 
-                    stroke="#64748b" 
+                    stroke="#94A3B8" 
                     fontSize={11} 
                     fontFamily="monospace"
                     tickLine={false}
@@ -480,14 +480,15 @@ export const ScenarioLab = () => {
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#090e1a',
-                      borderColor: '#334155',
+                      backgroundColor: '#0B1220',
+                      borderColor: '#263449',
                       borderRadius: '8px',
                       fontSize: '12px',
                       fontFamily: 'monospace',
+                      color: '#F8FAFC',
                       boxShadow: '0 10px 25px -5px rgba(0,0,0,0.6)'
                     }}
-                    labelStyle={{ color: '#94a3b8', fontWeight: 'bold' }}
+                    labelStyle={{ color: '#94A3B8', fontWeight: 'bold' }}
                     formatter={(val, name) => [
                       chartMetric === 'runway' ? `${val} Days` : Number(val).toLocaleString(),
                       name
@@ -502,13 +503,13 @@ export const ScenarioLab = () => {
                     <>
                       <Bar 
                         dataKey="Baseline Runway (Days)" 
-                        fill="#06b6d4" 
+                        fill="#55E6C1" 
                         radius={[4, 4, 0, 0]} 
                         maxBarSize={48} 
                       />
                       <Bar 
                         dataKey="Scenario Runway (Days)" 
-                        fill="#f43f5e" 
+                        fill="#F87171" 
                         radius={[4, 4, 0, 0]} 
                         maxBarSize={48} 
                       />
@@ -517,13 +518,13 @@ export const ScenarioLab = () => {
                     <>
                       <Bar 
                         dataKey="Baseline Draw" 
-                        fill="#64748b" 
+                        fill="#94A3B8" 
                         radius={[4, 4, 0, 0]} 
                         maxBarSize={48} 
                       />
                       <Bar 
                         dataKey="Scenario Burn" 
-                        fill="#f59e0b" 
+                        fill="#FBBF24" 
                         radius={[4, 4, 0, 0]} 
                         maxBarSize={48} 
                       />

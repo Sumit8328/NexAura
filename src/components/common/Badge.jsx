@@ -14,23 +14,25 @@ export const Badge = ({
   };
 
   const variantClasses = {
-    cyan: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-[0_0_8px_-2px_rgba(0,240,255,0.2)]',
-    emerald: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-    amber: 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-[0_0_8px_-2px_rgba(245,158,11,0.2)]',
-    red: 'bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-[0_0_8px_-2px_rgba(244,63,94,0.25)]',
-    slate: 'bg-slate-800 text-slate-300 border border-slate-700',
-    purple: 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30',
-    default: 'bg-slate-800/80 text-slate-300 border border-slate-700/80'
+    cyan: 'bg-[#55E6C1]/10 text-[#55E6C1] border border-[#55E6C1]/30 shadow-[0_0_8px_-2px_rgba(85,230,193,0.2)]',
+    sky: 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30 shadow-[0_0_8px_-2px_rgba(56,189,248,0.2)]',
+    emerald: 'bg-[#55E6C1]/10 text-[#55E6C1] border border-[#55E6C1]/30',
+    amber: 'bg-[#FBBF24]/10 text-[#FBBF24] border border-[#FBBF24]/30 shadow-[0_0_8px_-2px_rgba(251,191,36,0.2)]',
+    red: 'bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/30 shadow-[0_0_8px_-2px_rgba(248,113,113,0.25)]',
+    slate: 'bg-[#1B293B] text-[#94A3B8] border border-[#263449]',
+    purple: 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30',
+    default: 'bg-[#1B293B]/80 text-[#94A3B8] border border-[#263449]'
   };
 
   const dotClasses = {
-    cyan: 'bg-cyan-400 shadow-[0_0_6px_#00f0ff]',
-    emerald: 'bg-emerald-400 shadow-[0_0_6px_#10b981]',
-    amber: 'bg-amber-400 shadow-[0_0_6px_#f59e0b]',
-    red: 'bg-rose-500 shadow-[0_0_6px_#f43f5e]',
-    slate: 'bg-slate-400',
-    purple: 'bg-indigo-400',
-    default: 'bg-slate-400'
+    cyan: 'bg-[#55E6C1] shadow-[0_0_6px_#55E6C1]',
+    sky: 'bg-[#38BDF8] shadow-[0_0_6px_#38BDF8]',
+    emerald: 'bg-[#55E6C1] shadow-[0_0_6px_#55E6C1]',
+    amber: 'bg-[#FBBF24] shadow-[0_0_6px_#FBBF24]',
+    red: 'bg-[#F87171] shadow-[0_0_6px_#F87171]',
+    slate: 'bg-[#94A3B8]',
+    purple: 'bg-[#38BDF8]',
+    default: 'bg-[#94A3B8]'
   };
 
   return (
